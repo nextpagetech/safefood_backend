@@ -379,6 +379,52 @@ const deleteManyProducts = async (req, res) => {
   }
 };
 
+//search api write by sirisha
+
+const searchProducts = async (req, res) => {
+  const { productId,parentId,parentName,categoryId, categoryName } = req.query;
+
+  let queryObject = {};
+
+  if (productId) {
+    queryObject.productId = productId;
+  }
+
+  if (productName) {
+    const nameQueries = languageCodes.map((lang) => ({
+      [`title.${lang}`]: { $regex: productName, $options: 'i' },
+    }));
+    queryObject.$or = nameQueries;
+  }
+
+  if (categoryId) {
+    queryObject.categories = categoryId;
+  }
+
+  if (categoryName) {
+    try {
+      const categories = await Category.find({
+        name: { $regex: categoryName, $options: 'i' },
+      });
+      const categoryIds = categories.map((category) => category._id);
+      queryObject.categories = { $in: categoryIds };
+    } catch (err) {
+      return res.status(500).send({ message: err.message });
+    }
+  }
+
+  try {
+    const products = await Product.find(queryObject)
+      .populate({ path: 'category', select: '_id name' })
+      .populate({ path: 'categories', select: '_id name' })
+      .sort({ _id: -1 });
+
+    res.send(products);
+  } catch (err) {
+    res.status(500).send({ message: err.message });
+  }
+};
+
 module.exports = {
   addProduct,
   addAllProducts,
@@ -392,4 +438,5 @@ module.exports = {
   deleteProduct,
   deleteManyProducts,
   getShowingStoreProducts,
+  searchProducts,
 };
