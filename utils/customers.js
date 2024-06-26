@@ -6,6 +6,17 @@ const customers = [
     email: "paul@gmail.com",
     password: "12345678",
     phone: "715-651-7487",
+    shippingAddress:{
+      "name": "Linda's Office",
+      "contact": "801-844-8271",
+      "email": "linda.office@gmail.com",
+      "address": "456 Office Park",
+      "country": "USA",
+      "city": "Salt Lake City",
+      "area": "Downtown",
+      "zipCode": "84101",
+      "isDefault": true
+    },
   },
   {
     _id: "6439713c1d8869133e8881f2",
@@ -14,6 +25,17 @@ const customers = [
     email: "linda@gmail.com",
     password: "12345678",
     phone: "801-844-8271",
+    shippingAddress:{
+      "name": "Linda's Office",
+      "contact": "801-844-8271",
+      "email": "linda.office@gmail.com",
+      "address": "456 Office Park",
+      "country": "USA",
+      "city": "Salt Lake City",
+      "area": "Downtown",
+      "zipCode": "84101",
+      "isDefault": true
+    },
   },
   {
     _id: "6439713c1d8869133e8881e8",
@@ -22,6 +44,17 @@ const customers = [
     email: "aurora@gmail.com",
     password: "12345678",
     phone: "660-515-7629",
+    shippingAddress:{
+      "name": "Linda's Office",
+      "contact": "801-844-8271",
+      "email": "linda.office@gmail.com",
+      "address": "456 Office Park",
+      "country": "USA",
+      "city": "Salt Lake City",
+      "area": "Downtown",
+      "zipCode": "84101",
+      "isDefault": true
+    },
   },
   {
     _id: "6439713c1d8869133e8881e6",
@@ -30,6 +63,17 @@ const customers = [
     email: "james@gmail.com",
     password: "12345678",
     phone: "818-356-8600",
+    shippingAddress:{
+      "name": "Linda's Office",
+      "contact": "801-844-8271",
+      "email": "linda.office@gmail.com",
+      "address": "456 Office Park",
+      "country": "USA",
+      "city": "Salt Lake City",
+      "area": "Downtown",
+      "zipCode": "84101",
+      "isDefault": true
+    },
   },
   {
     _id: "6439713c1d8869133e8881e9",
@@ -38,6 +82,17 @@ const customers = [
     email: "justin@gmail.com",
     password: "12345678",
     phone: "212-512-2888",
+    shippingAddress:{
+      "name": "Linda's Office",
+      "contact": "801-844-8271",
+      "email": "linda.office@gmail.com",
+      "address": "456 Office Park",
+      "country": "USA",
+      "city": "Salt Lake City",
+      "area": "Downtown",
+      "zipCode": "84101",
+      "isDefault": true
+    },
   },
   {
     _id: "6439713c1d8869133e8881e4",
@@ -46,6 +101,17 @@ const customers = [
     email: "jon@gmail.com",
     password: "12345678",
     phone: "360-943-7332",
+    shippingAddress:{
+      "name": "Linda's Office",
+      "contact": "801-844-8271",
+      "email": "linda.office@gmail.com",
+      "address": "456 Office Park",
+      "country": "USA",
+      "city": "Salt Lake City",
+      "area": "Downtown",
+      "zipCode": "84101",
+      "isDefault": true
+    },
   },
   {
     _id: "6439713c1d8869133e8881ef",
@@ -54,6 +120,17 @@ const customers = [
     email: "gordon@gmail.com",
     password: "12345678",
     phone: "858-243-0632",
+    shippingAddress:{
+      "name": "Linda's Office",
+      "contact": "801-844-8271",
+      "email": "linda.office@gmail.com",
+      "address": "456 Office Park",
+      "country": "USA",
+      "city": "Salt Lake City",
+      "area": "Downtown",
+      "zipCode": "84101",
+      "isDefault": true
+    },
   },
   {
     _id: "6439713c1d8869133e8881ee",
@@ -62,6 +139,17 @@ const customers = [
     email: "lester@gmail.com",
     password: "12345678",
     phone: "715-657-9865",
+    shippingAddress:{
+      "name": "Linda's Office",
+      "contact": "801-844-8271",
+      "email": "linda.office@gmail.com",
+      "address": "456 Office Park",
+      "country": "USA",
+      "city": "Salt Lake City",
+      "area": "Downtown",
+      "zipCode": "84101",
+      "isDefault": true
+    },
   },
   {
     _id: "6439713c1d8869133e8881eb",
@@ -70,6 +158,17 @@ const customers = [
     email: "kathryn@gmail.com",
     password: "12345678",
     phone: "707-275-4858",
+    shippingAddress:{
+      "name": "Linda's Office",
+      "contact": "801-844-8271",
+      "email": "linda.office@gmail.com",
+      "address": "456 Office Park",
+      "country": "USA",
+      "city": "Salt Lake City",
+      "area": "Downtown",
+      "zipCode": "84101",
+      "isDefault": true
+    },
   },
   {
     _id: "6439713c1d8869133e8881f1",
@@ -78,6 +177,17 @@ const customers = [
     email: "eddie@gmail.com",
     password: "12345678",
     phone: "917-313-4731",
+    shippingAddress:{
+      "name": "Linda's Office",
+      "contact": "801-844-8271",
+      "email": "linda.office@gmail.com",
+      "address": "456 Office Park",
+      "country": "USA",
+      "city": "Salt Lake City",
+      "area": "Downtown",
+      "zipCode": "84101",
+      "isDefault": true
+    },
   },
   {
     _id: "6439713c1d8869133e8881e7",
@@ -86,6 +196,17 @@ const customers = [
     email: "christopher@gmail.com",
     password: "12345678",
     phone: "812-886-0550",
+    shippingAddress:{
+      "name": "Linda's Office",
+      "contact": "801-844-8271",
+      "email": "linda.office@gmail.com",
+      "address": "456 Office Park",
+      "country": "USA",
+      "city": "Salt Lake City",
+      "area": "Downtown",
+      "zipCode": "84101",
+      "isDefault": true
+    },
   },
   {
     _id: "6439713c1d8869133e8881ed",
@@ -94,6 +215,17 @@ const customers = [
     email: "samuel@gmail.com",
     password: "12345678",
     phone: "307-202-3590",
+    shippingAddress:{
+      "name": "Linda's Office",
+      "contact": "801-844-8271",
+      "email": "linda.office@gmail.com",
+      "address": "456 Office Park",
+      "country": "USA",
+      "city": "Salt Lake City",
+      "area": "Downtown",
+      "zipCode": "84101",
+      "isDefault": true
+    },
   },
   {
     _id: "6439713c1d8869133e8881f6",
@@ -102,6 +234,17 @@ const customers = [
     email: "richard@gmail.com",
     password: "12345678",
     phone: "828-896-3442",
+    shippingAddress:{
+      "name": "Linda's Office",
+      "contact": "801-844-8271",
+      "email": "linda.office@gmail.com",
+      "address": "456 Office Park",
+      "country": "USA",
+      "city": "Salt Lake City",
+      "area": "Downtown",
+      "zipCode": "84101",
+      "isDefault": true
+    },
   },
   {
     _id: "6439713c1d8869133e8881ea",
@@ -110,6 +253,17 @@ const customers = [
     email: "josephine@gmail.com",
     password: "12345678",
     phone: "734-256-1159",
+    shippingAddress:{
+      "name": "Linda's Office",
+      "contact": "801-844-8271",
+      "email": "linda.office@gmail.com",
+      "address": "456 Office Park",
+      "country": "USA",
+      "city": "Salt Lake City",
+      "area": "Downtown",
+      "zipCode": "84101",
+      "isDefault": true
+    },
   },
   {
     _id: "6439713c1d8869133e8881ec",
@@ -118,6 +272,17 @@ const customers = [
     email: "henry@gmail.com",
     password: "12345678",
     phone: "912-587-2159",
+    shippingAddress:{
+      "name": "Linda's Office",
+      "contact": "801-844-8271",
+      "email": "linda.office@gmail.com",
+      "address": "456 Office Park",
+      "country": "USA",
+      "city": "Salt Lake City",
+      "area": "Downtown",
+      "zipCode": "84101",
+      "isDefault": true
+    },
   },
   {
     _id: "6439713c1d8869133e8881f0",
@@ -126,6 +291,17 @@ const customers = [
     email: "williams@gmail.com",
     password: "12345678",
     phone: "714-776-3942",
+    shippingAddress:{
+      "name": "Linda's Office",
+      "contact": "801-844-8271",
+      "email": "linda.office@gmail.com",
+      "address": "456 Office Park",
+      "country": "USA",
+      "city": "Salt Lake City",
+      "area": "Downtown",
+      "zipCode": "84101",
+      "isDefault": true
+    },
   },
   {
     _id: "6439713c1d8869133e8881f3",
@@ -134,6 +310,17 @@ const customers = [
     email: "danielle@gmail.com",
     password: "12345678",
     phone: "831-539-6621",
+    shippingAddress:{
+      "name": "Linda's Office",
+      "contact": "801-844-8271",
+      "email": "linda.office@gmail.com",
+      "address": "456 Office Park",
+      "country": "USA",
+      "city": "Salt Lake City",
+      "area": "Downtown",
+      "zipCode": "84101",
+      "isDefault": true
+    },
   },
   {
     _id: "6439713c1d8869133e8881e5",
@@ -142,6 +329,17 @@ const customers = [
     email: "hilary@gmail.com",
     password: "12345678",
     phone: "802-516-2269",
+    shippingAddress:{
+      "name": "Linda's Office",
+      "contact": "801-844-8271",
+      "email": "linda.office@gmail.com",
+      "address": "456 Office Park",
+      "country": "USA",
+      "city": "Salt Lake City",
+      "area": "Downtown",
+      "zipCode": "84101",
+      "isDefault": true
+    },
   },
   {
     _id: "6439713c1d8869133e8881f4",
@@ -150,6 +348,17 @@ const customers = [
     email: "thomas@gmail.com",
     password: "12345678",
     phone: "818-363-8091",
+    shippingAddress:{
+      "name": "Linda's Office",
+      "contact": "801-844-8271",
+      "email": "linda.office@gmail.com",
+      "address": "456 Office Park",
+      "country": "USA",
+      "city": "Salt Lake City",
+      "area": "Downtown",
+      "zipCode": "84101",
+      "isDefault": true
+    },
   },
   {
     _id: "6439713c1d8869133e8881f5",
@@ -158,6 +367,17 @@ const customers = [
     email: "brain@gmail.com",
     password: "12345678",
     phone: "714-200-5488",
+    shippingAddress:{
+      "name": "Linda's Office",
+      "contact": "801-844-8271",
+      "email": "linda.office@gmail.com",
+      "address": "456 Office Park",
+      "country": "USA",
+      "city": "Salt Lake City",
+      "area": "Downtown",
+      "zipCode": "84101",
+      "isDefault": true
+    },
   },
 ];
 module.exports = customers;

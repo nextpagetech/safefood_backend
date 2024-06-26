@@ -37,47 +37,82 @@ const verifyEmailAddress = async (req, res) => {
   }
 };
 
+
 const registerCustomer = async (req, res) => {
-  const token = req.params.token;
-  const { name, email, password } = jwt.decode(token);
-  const isAdded = await Customer.findOne({ email: email });
+  try {
+    const { name, email, password } = req.body;
 
-  if (isAdded) {
-    const token = signInToken(isAdded);
-    return res.send({
-      token,
-      _id: isAdded._id,
-      name: isAdded.name,
-      email: isAdded.email,
-      message: "Email Already Verified!",
-    });
-  }
 
-  if (token) {
-    jwt.verify(token, 'lfjfjasjfsdfsfr09ri09wfsdfsdfrilfdjdj', (err, decoded) => {
-      if (err) {
-        return res.status(401).send({
-          message: "Token Expired, Please try again!",
-        });
-      } else {
-        const newUser = new Customer({
-          name,
-          email,
-          password: bcrypt.hashSync(password),
-        });
-        newUser.save();
-        const token = signInToken(newUser);
-        res.send({
-          token,
-          _id: newUser._id,
-          name: newUser.name,
-          email: newUser.email,
-          message: "Email Verified, Please Login Now!",
-        });
-      }
+    if (!name || !email || !password) {
+      return res.status(400).send({ message: "Name, email, and password are required" });
+    }
+
+    const isAdded = await Customer.findOne({ email });
+    if (isAdded) {
+      return res.status(400).send({ message: "Email already exists" });
+    }
+
+    console.log("name,email,password", name, email, password);
+
+  
+    const hashedPassword = bcrypt.hashSync(password, 10); 
+
+    const newUser = new Customer({
+      name,
+      email,
+      password: hashedPassword,
     });
+
+    await newUser.save(); 
+
+    res.status(201).send({ message: "User registered successfully" });
+  } catch (err) {
+    console.error("Error in registering customer:", err);
+    res.status(500).send({ message: "Internal Server Error" });
   }
 };
+
+// const registerCustomer = async (req, res) => {
+//   const token = req.params.token;
+//   const { name, email, password } = jwt.decode(token);
+//   const isAdded = await Customer.findOne({ email: email });
+
+//   if (isAdded) {
+//     const token = signInToken(isAdded);
+//     return res.send({
+//       token,
+//       _id: isAdded._id,
+//       name: isAdded.name,
+//       email: isAdded.email,
+//       message: "Email Already Verified!",
+//     });
+//   }
+
+//   if (token) {
+//     jwt.verify(token, 'lfjfjasjfsdfsfr09ri09wfsdfsdfrilfdjdj', (err, decoded) => {
+//       if (err) {
+//         return res.status(401).send({
+//           message: "Token Expired, Please try again!",
+//         });
+//       } else {
+//         const newUser = new Customer({
+//           name,
+//           email,
+//           password: bcrypt.hashSync(password),
+//         });
+//         newUser.save();
+//         const token = signInToken(newUser);
+//         res.send({
+//           token,
+//           _id: newUser._id,
+//           name: newUser.name,
+//           email: newUser.email,
+//           message: "Email Verified, Please Login Now!",
+//         });
+//       }
+//     });
+//   }
+// };
 
 const addAllCustomers = async (req, res) => {
   try {
@@ -263,6 +298,147 @@ const getCustomerById = async (req, res) => {
   }
 };
 
+// const addShippingAddress = async (req, res) => {
+//   try {
+//     const customerId = req.params.id;
+//     const newShippingAddress = req.body;
+
+    
+//     const result = await Customer.updateOne(
+//       { _id: customerId },
+//       {
+//         $set: {
+//           shippingAddress: newShippingAddress,
+//         },
+//       },
+//       { upsert: true } 
+//     );
+
+//     if (result.nModified > 0 || result.upserted) {
+//       return res.send({
+//         message: "Shipping address added or updated successfully.",
+//       });
+//     } else {
+//       return res.status(404).send({ message: "Customer not found." });
+//     }
+//   } catch (err) {
+//     res.status(500).send({
+//       message: err.message,
+//     });
+//   }
+// };
+
+
+const addShippingAddress = async (req, res) => {
+  try {
+    const newShippingAddress = new Customer(req.body);
+    await newShippingAddress.save();
+    res.status(200).send({
+      message: "Shipping address Added Successfully!",
+    });
+  } catch (err) {
+    res.status(500).send({
+      message: err.message,
+    });
+  }
+};
+
+
+
+
+
+
+
+
+
+
+
+
+const getallShippingAddress = async (req, res) => {
+  try {
+    const users = await Customer.find({}).sort({ _id: -1 });
+    res.send(users);
+  } catch (err) {
+    res.status(500).send({ message: err.message });
+  }
+};
+
+const getShippingAddress = async (req, res) => {
+  try {
+    const customerId = req.params.id;
+   
+
+    const customer = await Customer.findById(customerId);
+    res.send({ shippingAddress: customer?.shippingAddress });
+
+    // if (addressId) {
+    //   // Find the specific address by its ID
+    //   const address = customer.shippingAddress.find(
+    //     (addr) => addr._id.toString() === addressId.toString()
+    //   );
+
+    //   if (!address) {
+    //     return res.status(404).send({
+    //       message: "Shipping address not found!",
+    //     });
+    //   }
+
+    //   return res.send({ shippingAddress: address });
+    // } else {
+    //   res.send({ shippingAddress: customer?.shippingAddress });
+    // }
+  } catch (err) {
+    // console.error("Error adding shipping address:", err);
+    res.status(500).send({
+      message: err.message,
+    });
+  }
+};
+
+const updateShippingAddress = async (req, res) => {
+  try {
+    const activeDB = req.activeDB;
+
+    const Customer = activeDB.model("Customer", CustomerModel);
+    const customer = await Customer.findById(req.params.id);
+
+    if (customer) {
+      customer.shippingAddress.push(req.body);
+
+      await customer.save();
+      res.send({ message: "Success" });
+    }
+  } catch (err) {
+    res.status(500).send({
+      message: err.message,
+    });
+  }
+};
+
+const deleteShippingAddress = async (req, res) => {
+  try {
+    const activeDB = req.activeDB;
+    const { userId, shippingId } = req.params;
+
+    const Customer = activeDB.model("Customer", CustomerModel);
+    await Customer.updateOne(
+      { _id: userId },
+      {
+        $pull: {
+          shippingAddress: { _id: shippingId },
+        },
+      }
+    );
+
+    res.send({ message: "Shipping Address Deleted Successfully!" });
+  } catch (err) {
+    res.status(500).send({
+      message: err.message,
+    });
+  }
+};
+
+
 const updateCustomer = async (req, res) => {
   console.log("updateCustomer");
   try {
@@ -321,4 +497,9 @@ module.exports = {
   getCustomerById,
   updateCustomer,
   deleteCustomer,
+  addShippingAddress,
+  getShippingAddress,
+  updateShippingAddress,
+  deleteShippingAddress,
+  getallShippingAddress,
 };

@@ -14,6 +14,10 @@ const {
   updateCustomer,
   deleteCustomer,
   addAllCustomers,
+  addShippingAddress,
+  getShippingAddress,
+  updateShippingAddress,
+  deleteShippingAddress,
 
   
 } = require("../controller/customerController");
@@ -26,8 +30,20 @@ const {
 //verify email
 router.post("/verify-email", emailVerificationLimit, verifyEmailAddress);
 
+// shipping address send to array
+router.post("/shipping/address/:id", addShippingAddress);
+
+// get all shipping address
+router.get("/shipping/address/:id", getShippingAddress);
+
+// shipping address update
+router.put("/shipping/address/:userId/:shippingId", updateShippingAddress);
+
+// shipping address delete
+router.delete("/shipping/address/:userId/:shippingId", deleteShippingAddress);
+
 //register a user
-router.post("/register/:token", registerCustomer);
+router.post("/register", registerCustomer);
 
 //login a user
 router.post("/login", loginCustomer);

@@ -1,4 +1,5 @@
-[{
+[
+  {
   "_id": {
     "$oid": "6439713c1d8869133e8881e3"
   },
@@ -12,8 +13,20 @@
   },
   "updatedAt": {
     "$date": "2023-04-14T15:29:00.800Z"
+  },
+  "shippingAddress": {
+    "name": "Linda's Office",
+    "contact": "801-844-8271",
+    "email": "linda.office@gmail.com",
+    "address": "456 Office Park",
+    "country": "USA",
+    "city": "Salt Lake City",
+    "area": "Downtown",
+    "zipCode": "84101",
+    "isDefault": true
   }
-},{
+},
+{
   "_id": {
     "$oid": "6439713c1d8869133e8881f2"
   },
@@ -27,8 +40,20 @@
   },
   "updatedAt": {
     "$date": "2023-04-14T15:29:00.803Z"
+  },
+  "shippingAddress": {
+    "name": "Linda's Office",
+    "contact": "801-844-8271",
+    "email": "linda.office@gmail.com",
+    "address": "456 Office Park",
+    "country": "USA",
+    "city": "Salt Lake City",
+    "area": "Downtown",
+    "zipCode": "84101",
+    "isDefault": true
   }
-},{
+},
+{
   "_id": {
     "$oid": "6439713c1d8869133e8881e8"
   },
@@ -42,6 +67,17 @@
   },
   "updatedAt": {
     "$date": "2023-04-14T15:29:00.801Z"
+  },
+  "shippingAddress": {
+    "name": "Linda's Office",
+    "contact": "801-844-8271",
+    "email": "linda.office@gmail.com",
+    "address": "456 Office Park",
+    "country": "USA",
+    "city": "Salt Lake City",
+    "area": "Downtown",
+    "zipCode": "84101",
+    "isDefault": true
   }
 },{
   "_id": {
@@ -57,6 +93,17 @@
   },
   "updatedAt": {
     "$date": "2023-04-14T15:29:00.801Z"
+  },
+  "shippingAddress": {
+    "name": "Linda's Office",
+    "contact": "801-844-8271",
+    "email": "linda.office@gmail.com",
+    "address": "456 Office Park",
+    "country": "USA",
+    "city": "Salt Lake City",
+    "area": "Downtown",
+    "zipCode": "84101",
+    "isDefault": true
   }
 },{
   "_id": {
@@ -72,6 +119,17 @@
   },
   "updatedAt": {
     "$date": "2023-04-14T15:29:00.802Z"
+  },
+  "shippingAddress": {
+    "name": "Linda's Office",
+    "contact": "801-844-8271",
+    "email": "linda.office@gmail.com",
+    "address": "456 Office Park",
+    "country": "USA",
+    "city": "Salt Lake City",
+    "area": "Downtown",
+    "zipCode": "84101",
+    "isDefault": true
   }
 },{
   "_id": {
@@ -87,6 +145,17 @@
   },
   "updatedAt": {
     "$date": "2023-04-14T15:29:00.801Z"
+  },
+  "shippingAddress": {
+    "name": "Linda's Office",
+    "contact": "801-844-8271",
+    "email": "linda.office@gmail.com",
+    "address": "456 Office Park",
+    "country": "USA",
+    "city": "Salt Lake City",
+    "area": "Downtown",
+    "zipCode": "84101",
+    "isDefault": true
   }
 },{
   "_id": {
@@ -102,6 +171,17 @@
   },
   "updatedAt": {
     "$date": "2023-04-14T15:29:00.802Z"
+  },
+  "shippingAddress": {
+    "name": "Linda's Office",
+    "contact": "801-844-8271",
+    "email": "linda.office@gmail.com",
+    "address": "456 Office Park",
+    "country": "USA",
+    "city": "Salt Lake City",
+    "area": "Downtown",
+    "zipCode": "84101",
+    "isDefault": true
   }
 },{
   "_id": {
@@ -117,6 +197,17 @@
   },
   "updatedAt": {
     "$date": "2023-04-14T15:29:00.802Z"
+  },
+  "shippingAddress": {
+    "name": "Linda's Office",
+    "contact": "801-844-8271",
+    "email": "linda.office@gmail.com",
+    "address": "456 Office Park",
+    "country": "USA",
+    "city": "Salt Lake City",
+    "area": "Downtown",
+    "zipCode": "84101",
+    "isDefault": true
   }
 },{
   "_id": {
@@ -132,6 +223,17 @@
   },
   "updatedAt": {
     "$date": "2023-04-14T15:29:00.802Z"
+  },
+  "shippingAddress": {
+    "name": "Linda's Office",
+    "contact": "801-844-8271",
+    "email": "linda.office@gmail.com",
+    "address": "456 Office Park",
+    "country": "USA",
+    "city": "Salt Lake City",
+    "area": "Downtown",
+    "zipCode": "84101",
+    "isDefault": true
   }
 },{
   "_id": {
@@ -147,6 +249,17 @@
   },
   "updatedAt": {
     "$date": "2023-04-14T15:29:00.803Z"
+  },
+  "shippingAddress": {
+    "name": "Linda's Office",
+    "contact": "801-844-8271",
+    "email": "linda.office@gmail.com",
+    "address": "456 Office Park",
+    "country": "USA",
+    "city": "Salt Lake City",
+    "area": "Downtown",
+    "zipCode": "84101",
+    "isDefault": true
   }
 },{
   "_id": {
@@ -162,6 +275,17 @@
   },
   "updatedAt": {
     "$date": "2023-04-14T15:29:00.801Z"
+  },
+  "shippingAddress": {
+    "name": "Linda's Office",
+    "contact": "801-844-8271",
+    "email": "linda.office@gmail.com",
+    "address": "456 Office Park",
+    "country": "USA",
+    "city": "Salt Lake City",
+    "area": "Downtown",
+    "zipCode": "84101",
+    "isDefault": true
   }
 },{
   "_id": {
@@ -177,6 +301,17 @@
   },
   "updatedAt": {
     "$date": "2023-04-14T15:29:00.802Z"
+  },
+  "shippingAddress": {
+    "name": "Linda's Office",
+    "contact": "801-844-8271",
+    "email": "linda.office@gmail.com",
+    "address": "456 Office Park",
+    "country": "USA",
+    "city": "Salt Lake City",
+    "area": "Downtown",
+    "zipCode": "84101",
+    "isDefault": true
   }
 },{
   "_id": {
@@ -192,6 +327,17 @@
   },
   "updatedAt": {
     "$date": "2023-04-14T15:29:00.803Z"
+  },
+  "shippingAddress": {
+    "name": "Linda's Office",
+    "contact": "801-844-8271",
+    "email": "linda.office@gmail.com",
+    "address": "456 Office Park",
+    "country": "USA",
+    "city": "Salt Lake City",
+    "area": "Downtown",
+    "zipCode": "84101",
+    "isDefault": true
   }
 },{
   "_id": {
@@ -207,6 +353,17 @@
   },
   "updatedAt": {
     "$date": "2023-04-14T15:29:00.802Z"
+  },
+  "shippingAddress": {
+    "name": "Linda's Office",
+    "contact": "801-844-8271",
+    "email": "linda.office@gmail.com",
+    "address": "456 Office Park",
+    "country": "USA",
+    "city": "Salt Lake City",
+    "area": "Downtown",
+    "zipCode": "84101",
+    "isDefault": true
   }
 },{
   "_id": {
@@ -222,6 +379,17 @@
   },
   "updatedAt": {
     "$date": "2023-04-14T15:29:00.802Z"
+  },
+  "shippingAddress": {
+    "name": "Linda's Office",
+    "contact": "801-844-8271",
+    "email": "linda.office@gmail.com",
+    "address": "456 Office Park",
+    "country": "USA",
+    "city": "Salt Lake City",
+    "area": "Downtown",
+    "zipCode": "84101",
+    "isDefault": true
   }
 },{
   "_id": {
@@ -237,6 +405,17 @@
   },
   "updatedAt": {
     "$date": "2023-04-14T15:29:00.802Z"
+  },
+  "shippingAddress": {
+    "name": "Linda's Office",
+    "contact": "801-844-8271",
+    "email": "linda.office@gmail.com",
+    "address": "456 Office Park",
+    "country": "USA",
+    "city": "Salt Lake City",
+    "area": "Downtown",
+    "zipCode": "84101",
+    "isDefault": true
   }
 },{
   "_id": {
@@ -252,6 +431,17 @@
   },
   "updatedAt": {
     "$date": "2023-04-14T15:29:00.803Z"
+  },
+  "shippingAddress": {
+    "name": "Linda's Office",
+    "contact": "801-844-8271",
+    "email": "linda.office@gmail.com",
+    "address": "456 Office Park",
+    "country": "USA",
+    "city": "Salt Lake City",
+    "area": "Downtown",
+    "zipCode": "84101",
+    "isDefault": true
   }
 },{
   "_id": {
@@ -267,6 +457,17 @@
   },
   "updatedAt": {
     "$date": "2023-04-14T15:29:00.801Z"
+  },
+  "shippingAddress": {
+    "name": "Linda's Office",
+    "contact": "801-844-8271",
+    "email": "linda.office@gmail.com",
+    "address": "456 Office Park",
+    "country": "USA",
+    "city": "Salt Lake City",
+    "area": "Downtown",
+    "zipCode": "84101",
+    "isDefault": true
   }
 },{
   "_id": {
@@ -282,6 +483,17 @@
   },
   "updatedAt": {
     "$date": "2023-04-14T15:29:00.803Z"
+  },
+  "shippingAddress": {
+    "name": "Linda's Office",
+    "contact": "801-844-8271",
+    "email": "linda.office@gmail.com",
+    "address": "456 Office Park",
+    "country": "USA",
+    "city": "Salt Lake City",
+    "area": "Downtown",
+    "zipCode": "84101",
+    "isDefault": true
   }
 },{
   "_id": {
@@ -297,5 +509,16 @@
   },
   "updatedAt": {
     "$date": "2023-04-14T15:29:00.803Z"
+  },
+  "shippingAddress": {
+    "name": "Linda's Office",
+    "contact": "801-844-8271",
+    "email": "linda.office@gmail.com",
+    "address": "456 Office Park",
+    "country": "USA",
+    "city": "Salt Lake City",
+    "area": "Downtown",
+    "zipCode": "84101",
+    "isDefault": true
   }
 }]
