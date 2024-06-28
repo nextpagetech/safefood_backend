@@ -13,30 +13,13 @@ const ProgramSchema = new mongoose.Schema({
     description_two: { type: String, required: false }, 
     program_video: { type: String, required: false }, 
     status: { type: String, required: false }, 
-    created_on: { 
-        type: Date, 
-        required: false,
-        set: dateStr => {
-            if (typeof dateStr === 'string') {
-                const [day, month, year] = dateStr.split('/');
-                return new Date(`20${year}-${month}-${day}`);
-            }
-            return dateStr;
-        }
-    }, 
+     
     created_by: { type: String, required: false }, 
-    modified_on: { 
-        type: Date, 
-        required: false,
-        set: dateStr => {
-            if (typeof dateStr === 'string') {
-                const [day, month, year] = dateStr.split('/');
-                return new Date(`20${year}-${month}-${day}`);
-            }
-            return dateStr;
-        }
-    }, 
+    
     modified_by: { type: String, required: false }, 
+}
+,{
+    timestamps: true,
 });
 
 module.exports = mongoose.model('Our_Programs', ProgramSchema);
