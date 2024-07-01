@@ -1,13 +1,13 @@
 const mongoose = require("mongoose");
-const bcrypt = require("bcryptjs");
 
-const vendorproductSchema = new mongoose.Schema(
+const shippingAddressSchema = new mongoose.Schema(
   {
+
     name: {
       type: String,
-      required: false,
+      required: true,
     },
-    image: {
+    contact: {
       type: String,
       required: false,
     },
@@ -17,37 +17,48 @@ const vendorproductSchema = new mongoose.Schema(
       unique: true,
       lowercase: true,
     },
-    password: {
+
+    address: {
       type: String,
       required: false,
-      default: bcrypt.hashSync("12345678"),
     },
-    phone: {
+    country: {
+      type: String,
+      required: false,
+    },
+    city: {
+      type: String,
+      required: false,
+    },
+    Landmark: {
+      type: String,
+      required: false,
+    },
+    zipcode: {
       type: String,
       required: false,
     },
     status: {
-      type: Number,
+      type: String,
       required: false,
     },
     created_by: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
-      required: false
+       required: false
     },
-    modified_by: {
+    modified_by: { 
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'User',
-      required: false
-    }
-
+       ref: 'User' ,
+        required: false}
 
   },
   {
     timestamps: true,
   }
+
 );
 
-const Vendorproduct = mongoose.model("Vendorproduct", vendorproductSchema);
+const ShippingAddress = mongoose.model("shipping_address", shippingAddressSchema);
 
-module.exports = Vendorproduct;
+module.exports = ShippingAddress;

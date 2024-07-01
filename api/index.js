@@ -13,6 +13,8 @@ const adminRoutes = require("../routes/adminRoutes");
 const orderRoutes = require("../routes/orderRoutes");
 const customerOrderRoutes = require("../routes/customerOrderRoutes");
 const categoryRoutes = require("../routes/categoryRoutes");
+const shippingRoutes = require("../routes/shipping_address");
+const vendorRoutes = require("../routes/vendor_products");
 const couponRoutes = require("../routes/couponRoutes");
 const attributeRoutes = require("../routes/attributeRoutes");
 const settingRoutes = require("../routes/settingRoutes");
@@ -45,8 +47,10 @@ app.get("/", (req, res) => {
 
 //this for route will need for store front, also for admin dashboard
 app.use("/api/products/", productRoutes);
-app.use("/api/category/", categoryRoutes);
 app.use("/api/coupon/", couponRoutes);
+app.use("/api/category/", categoryRoutes);
+app.use("/api/shipping/", shippingRoutes);
+app.use("/api/vendor/", vendorRoutes);
 app.use("/api/customer/", customerRoutes);
 app.use("/api/order/", isAuth, customerOrderRoutes);
 app.use("/api/attributes/", attributeRoutes);
