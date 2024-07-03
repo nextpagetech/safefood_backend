@@ -80,6 +80,7 @@ const updatevendor_product = async (req, res) => {
   }
 };
 
+
 const deletevendor_product = (req, res) => {
   Vendor_product.deleteOne({ _id: req.params.id }, (err) => {
     if (err) {
