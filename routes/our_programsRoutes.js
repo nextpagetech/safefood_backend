@@ -7,7 +7,7 @@ const {
     getPrograms,
     getProgramById,
     updateProgram,
-    deleteProgram
+    deleteProgram,
 } = require('../controller/our_programsController');
 
 router.post('/createprogram', createProgram);
