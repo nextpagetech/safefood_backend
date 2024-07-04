@@ -2,10 +2,10 @@
 const mongoose = require('mongoose');
 
 const ProgramSchema = new mongoose.Schema({
-    program_id: { type: Number, required: true }, 
-    program_type: { type: String, required: false }, 
+
     program_caption_description: { type: String, required: false }, 
     program_title: { type: String, required: false }, 
+    program_type: { type: String, required: false }, 
     program_image: { type: String, required: false }, 
     program_description: { type: String, required: false }, 
     program_title_two: { type: String, required: false }, 
