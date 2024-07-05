@@ -83,29 +83,29 @@ exports.updateProgram = async (req, res) => {
     }
   };
 
-exports.deleteProgram = async (req, res) => {
-    try {
-        console.log("idsfgyugfrr",id);
-        const program = await OurProgram.deleteOne(req.params.id);
-        if (!program) {
-            return res.status(404).json({ error: "Program not found" });
-        }
-        res.status(200).json({ message: "Program deleted successfully" });
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-};
+// exports.deleteProgram = async (req, res) => {
+//     try {
+//         console.log("idsfgyugfrr",id);
+//         const program = await OurProgram.deleteOne(req.params.id);
+//         if (!program) {
+//             return res.status(404).json({ error: "Program not found" });
+//         }
+//         res.status(200).json({ message: "Program deleted successfully" });
+//     } catch (error) {
+//         res.status(500).json({ error: error.message });
+//     }
+// };
 
-// const deleteProgram = (req, res) => {
-//     OurProgram.deleteOne({ _id: req.params.id }, (err) => {
-//       if (err) {
-//         res.status(500).send({
-//           message: err.message,
-//         });
-//       } else {
-//         res.status(200).send({
-//           message: "Program deleted successfully!",
-//         });
-//       }
-//     });
-//   };
+exports. deleteProgram = (req, res) => {
+    OurProgram.deleteOne({ _id: req.params.id }, (err) => {
+      if (err) {
+        res.status(500).send({
+          message: err.message,
+        });
+      } else {
+        res.status(200).send({
+          message: "Program deleted successfully!",
+        });
+      }
+    });
+  };
