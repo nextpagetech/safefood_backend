@@ -11,12 +11,38 @@ exports.createProgram = async (req, res) => {
     }
 };
 
+// exports.getPrograms = async (req, res) => {
+//     try {
+//         const programs = await OurProgram.find();
+//         res.status(200).json(programs);
+//     } catch (error) {
+//         res.status(500).json({ error: error.message });
+//     }
+// };
 exports.getPrograms = async (req, res) => {
+    const { program_type } = req.query; // Retrieve program_type from req.query
+    console.log("Requested program_type:", program_type); // Log the requested program_type
     try {
-        
-        const programs = await OurProgram.find();
+        let programs;
+        if (program_type) {
+            // Convert the program_type to lowercase for case-insensitive comparison
+            const programTypeLowerCase = program_type.toLowerCase();
+
+            // Define the filter object
+            const filter = {
+                program_type: { $regex: new RegExp(`^${programTypeLowerCase}$`, 'i') }
+            };
+
+            // Fetch programs based on the filter
+            programs = await OurProgram.find(filter);
+        } else {
+            // If no program_type is specified, return all programs
+            programs = await OurProgram.find();
+        }
+        console.log("Retrieved programs:", programs); // Log the retrieved programs
         res.status(200).json(programs);
     } catch (error) {
+        console.error("Error fetching programs:", error); // Log any errors
         res.status(500).json({ error: error.message });
     }
 };
