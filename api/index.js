@@ -23,6 +23,7 @@ const languageRoutes = require("../routes/languageRoutes");
 const ourProgramsRoutes = require("../routes/our_programsRoutes"); // Ensure this matches the updated route file
 const notificationRoutes = require("../routes/notificationRoutes");
 const { isAuth, isAdmin } = require("../config/auth");
+const contactRoutes = require("../routes/contactRoutes");
 // const {
 //   getGlobalSetting,
 //   getStoreCustomizationSetting,
@@ -62,6 +63,7 @@ app.use("/api/our_programs/", ourProgramsRoutes);
 //if you not use admin dashboard then these two route will not needed.
 app.use("/api/admin/", adminRoutes);
 app.use("/api/orders/", orderRoutes);
+app.use("/api/contact/", contactRoutes);
 
 // Use express's default error handling middleware
 app.use((err, req, res, next) => {
@@ -75,8 +77,7 @@ app.use((err, req, res, next) => {
 // // Serve the index.html file for all routes
 // app.get("*", (req, res) => {
 //   res.sendFile(path.join(__dirname, "build", "index.html"));
-// });
-
+// });5
 const PORT = process.env.PORT || 5000;
 
 const server = http.createServer(app);
