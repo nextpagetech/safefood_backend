@@ -12,6 +12,7 @@ const {
 } = require("../controller/vendor_products");
 
 //add a vendor
+
 router.post("/vendor_productadd", vendor_productadd);
 
 router.post("/vendor_productmapadd", vendor_productmapadd);

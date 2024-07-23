@@ -1,6 +1,5 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
-
 const vendorproductSchema = new mongoose.Schema(
   {
     name: {

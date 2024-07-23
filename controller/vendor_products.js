@@ -116,7 +116,6 @@ const vendor_productmapadd = async (req, res) => {
 //   }
 // };
 
-
 const vendor_productmapaddupdate = async (req, res) => {
   try {
     const { vendorId, productId, prices, title, variants } = req.body;
