@@ -6,6 +6,7 @@ const {
   getAllProducts,
   getShowingProducts,
   getProductById,
+  getProductByOrderid,
   getProductBySlug,
   updateProduct,
   updateManyProducts,
@@ -13,6 +14,8 @@ const {
   deleteProduct,
   deleteManyProducts,
   getShowingStoreProducts,
+  getAllProductsVendor,
+  updateProductVendor,
 } = require("../controller/productController");
 
 //add a product
@@ -24,6 +27,8 @@ router.post("/all", addAllProducts);
 //get a product
 router.post("/:id", getProductById);
 
+router.post("/:id", getProductByOrderid);
+
 //get showing products only
 router.get("/show", getShowingProducts);
 
@@ -32,12 +37,14 @@ router.get("/store", getShowingStoreProducts);
 
 //get all products
 router.get("/", getAllProducts);
+router.get("/", getAllProductsVendor);
 
 //get a product by slug
 router.get("/product/:slug", getProductBySlug);
 
 //update a product
 router.patch("/:id", updateProduct);
+router.patch("/:id", updateProductVendor);
 
 //update many products
 router.patch("/update/many", updateManyProducts);

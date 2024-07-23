@@ -123,6 +123,158 @@ const getAllProducts = async (req, res) => {
   }
 };
 
+
+const getAllProductsVendor = async (req, res) => {
+  const { title, category, price, page, limit } = req.query;
+
+  let queryObject = {};
+  let sortObject = {};
+  if (title) {
+    const titleQueries = languageCodes.map((lang) => ({
+      [`title.${lang}`]: { $regex: `${title}`, $options: "i" },
+    }));
+    queryObject.$or = titleQueries;
+  }
+
+  if (price === "low") {
+    sortObject = {
+      "prices.originalPrice": 1,
+    };
+  } else if (price === "high") {
+    sortObject = {
+      "prices.originalPrice": -1,
+    };
+  } else if (price === "published") {
+    queryObject.status = "show";
+  } else if (price === "unPublished") {
+    queryObject.status = "hide";
+  } else if (price === "status-selling") {
+    queryObject.stock = { $gt: 0 };
+  } else if (price === "status-out-of-stock") {
+    queryObject.stock = { $lt: 1 };
+  } else if (price === "date-added-asc") {
+    sortObject.createdAt = 1;
+  } else if (price === "date-added-desc") {
+    sortObject.createdAt = -1;
+  } else if (price === "date-updated-asc") {
+    sortObject.updatedAt = 1;
+  } else if (price === "date-updated-desc") {
+    sortObject.updatedAt = -1;
+  } else {
+    sortObject = { _id: -1 };
+  }
+
+  // console.log('sortObject', sortObject);
+
+  if (category) {
+    queryObject.categories = category;
+  }
+
+  const pages = Number(page);
+  const limits = Number(limit);
+  const skip = (pages - 1) * limits;
+
+  try {
+    const totalDoc = await Product.countDocuments(queryObject);
+
+    const products = await Product.find(queryObject)
+      .populate({ path: "category", select: "_id name" })
+      .populate({ path: "categories", select: "_id name" })
+      .sort(sortObject)
+      .skip(skip)
+      .limit(limits);
+
+    res.send({
+      products,
+      totalDoc,
+      limits,
+      pages,
+    });
+  } catch (err) {
+    // console.log("error", err);
+    res.status(500).send({
+      message: err.message,
+    });
+  }
+};
+
+const getProductByOrderid = async (req, res) => {
+  const { title, category, price, page, limit } = req.query;
+  const { order_ids } = req.body;
+
+  let queryObject = {};
+  let sortObject = {};
+
+  if (order_ids && Array.isArray(order_ids) && order_ids.length > 0) {
+    queryObject.orderId = { $in: order_ids };
+  }
+
+  if (title) {
+    const titleQueries = languageCodes.map((lang) => ({
+      [`title.${lang}`]: { $regex: `${title}`, $options: "i" },
+    }));
+    queryObject.$or = titleQueries;
+  }
+
+  if (price === "low") {
+    sortObject = {
+      "prices.originalPrice": 1,
+    };
+  } else if (price === "high") {
+    sortObject = {
+      "prices.originalPrice": -1,
+    };
+  } else if (price === "published") {
+    queryObject.status = "show";
+  } else if (price === "unPublished") {
+    queryObject.status = "hide";
+  } else if (price === "status-selling") {
+    queryObject.stock = { $gt: 0 };
+  } else if (price === "status-out-of-stock") {
+    queryObject.stock = { $lt: 1 };
+  } else if (price === "date-added-asc") {
+    sortObject.createdAt = 1;
+  } else if (price === "date-added-desc") {
+    sortObject.createdAt = -1;
+  } else if (price === "date-updated-asc") {
+    sortObject.updatedAt = 1;
+  } else if (price === "date-updated-desc") {
+    sortObject.updatedAt = -1;
+  } else {
+    sortObject = { _id: -1 };
+  }
+
+  if (category) {
+    queryObject.categories = category;
+  }
+
+  const pages = Number(page) || 1;
+  const limits = Number(limit) || 10;
+  const skip = (pages - 1) * limits;
+
+  try {
+    const totalDoc = await Product.countDocuments(queryObject);
+
+    const products = await Product.find(queryObject)
+      .populate({ path: "category", select: "_id name" })
+      .populate({ path: "categories", select: "_id name" })
+      .sort(sortObject)
+      .skip(skip)
+      .limit(limits);
+
+    res.send({
+      products,
+      totalDoc,
+      limits,
+      pages,
+    });
+  } catch (err) {
+    res.status(500).send({
+      message: err.message,
+    });
+  }
+};
+
 const getProductBySlug = async (req, res) => {
   // console.log("slug", req.params.slug);
   try {
@@ -148,6 +300,7 @@ const getProductById = async (req, res) => {
     });
   }
 };
+
 
 const updateProduct = async (req, res) => {
   // console.log('update product')
@@ -187,6 +340,27 @@ const updateProduct = async (req, res) => {
   } catch (err) {
     res.status(404).send(err.message);
     // console.log('err',err)
+  }
+};
+const updateProductVendor = async (req, res) => {
+
+  try {
+    console.log("data retrived");
+    const product = await Product.findById(req.params.id);
+    if (product) {
+      product.title = { ...product.title, ...req.body.title };
+      product.productId = req.body.productId;
+      product.prices = req.body.prices;
+      await product.save();
+      res.send({ data: product, message: "Product updated successfully!" });
+    } else {
+      res.status(404).send({
+        message: "Product Not Found!",
+      });
+    }
+  } catch (err) {
+    res.status(404).send(err.message);
+
   }
 };
 
@@ -382,7 +556,7 @@ const deleteManyProducts = async (req, res) => {
 //search api write by sirisha
 
 const searchProducts = async (req, res) => {
-  const { productId,parentId,parentName,categoryId, categoryName } = req.query;
+  const { productId, parentId, parentName, categoryId, categoryName } = req.query;
 
   let queryObject = {};
 
@@ -431,6 +605,7 @@ module.exports = {
   getAllProducts,
   getShowingProducts,
   getProductById,
+  getProductByOrderid,
   getProductBySlug,
   updateProduct,
   updateManyProducts,
@@ -439,4 +614,6 @@ module.exports = {
   deleteManyProducts,
   getShowingStoreProducts,
   searchProducts,
+  getAllProductsVendor,
+  updateProductVendor,
 };

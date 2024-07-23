@@ -26,6 +26,33 @@ const vendorproductSchema = new mongoose.Schema(
       type: String,
       required: false,
     },
+    products: [
+      {
+        productId: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: 'Product',
+          required: false,
+        },
+        prices: {
+          originalPrice: {
+            type: Number,
+            required: true,
+          },
+          price: {
+            type: Number,
+            required: false,
+          },
+          discount: {
+            type: Number,
+            required: false,
+          },
+        },
+        title: {
+          type: Object,
+          required: true,
+        },
+      }
+    ],
     status: {
       type: Number,
       required: false,
@@ -40,8 +67,6 @@ const vendorproductSchema = new mongoose.Schema(
       ref: 'User',
       required: false
     }
-
-
   },
   {
     timestamps: true,
