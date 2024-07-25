@@ -1,76 +1,121 @@
+
 const mongoose = require("mongoose");
 const Shipping_address = require("../models/shipping_address");
-const { languageCodes } = require("../utils/data");
 
+// Add a new shipping address
 const shipping_addressadd = async (req, res) => {
   try {
+    // Check if the email already exists
+    const existingAddress = await Shipping_address.findOne({ email: req.body.email });
+    if (existingAddress) {
+      return res.status(200).send({
+        message: "Shipping Address Added Successfully!",
+        data: existingAddress,
+      });
+    }
+
+    // If defaultAddress is set, update existing default addresses to false
+    if (req.body.defaultAddress) {
+      await Shipping_address.updateMany(
+        { created_by: req.body.created_by, defaultAddress: true },
+        { $set: { defaultAddress: false } }
+      );
+    }
+
+    // Create a new shipping address
     const newShipping_address = new Shipping_address(req.body);
-    await newShipping_address.save();
+    const savedAddress = await newShipping_address.save();
+
     res.status(200).send({
       message: "Shipping Address Added Successfully!",
+      data: savedAddress,
     });
   } catch (err) {
     res.status(500).send({
-      message: err.message,
+      message: "An error occurred while adding the shipping address.",
+      error: err.message,
     });
   }
 };
 
-
+// Get all shipping addresses
 const getshipping_address = async (req, res) => {
   try {
-    const vendors = await Shipping_address.find({}).sort({ _id: -1 });
-    res.send(vendors);
-  } catch (err) {
-    res.status(500).send({ message: err.message });
-  }
-};
-
-const getshippingaddressId = async (req, res) => {
-  try {
-    const customer = await Shipping_address.findById(req.params.id);
-    res.send(customer);
+    const addresses = await Shipping_address.find({}).sort({ _id: -1 });
+    res.status(200).send(addresses);
   } catch (err) {
     res.status(500).send({
-      message: err.message,
+      message: "An error occurred while retrieving shipping addresses.",
+      error: err.message,
     });
   }
 };
-const updateshippingaddress = async (req, res) => {
-  console.log("updateShippinaddress");
-  try {
-    const customer = await Shipping_address.findById(req.params.id);
-    if (customer) {
-      customer.name = req.body.name;
-      customer.contact = req.body.contact;
-      customer.email = req.body.email;
-      customer.address = req.body.address;
-      customer.country = req.body.country;
-      customer.city = req.body.city;
-      customer.Landmark = req.body.Landmark;
-      customer.zipcode = req.body.zipcode;
-      customer.status = req.body.status;
-      customer.modified_by = req.body.modified_by; 
 
-      // customer.password = bcrypt.hashSync("12345678");
-      const updatedUser = await customer.save();
-      res.send({
-        _id: updatedUser._id,
-        name: updatedUser.name,
-        contact: updatedUser.contact,
-        email: updatedUser.email,
-        address: updatedUser.address,
-        country: updatedUser.country,
-        city: updatedUser.city,
-        Landmark: updatedUser.Landmark,
-        zipcode: updatedUser.zipcode,
-        status: updatedUser.status,
-        modified_by: updatedUser.modified_by,
+// Get a specific shipping address by ID
+const getshippingaddressId = async (req, res) => {
+  try {
+    const address = await Shipping_address.findById(req.params.id);
+    if (address) {
+      res.status(200).send(address);
+    } else {
+      res.status(404).send({
+        message: "Address not found",
+      });
+    }
+  } catch (err) {
+    res.status(500).send({
+      message: "An error occurred while retrieving the shipping address.",
+      error: err.message,
+    });
+  }
+};
+
+// Update a shipping address
+const updateshippingaddress = async (req, res) => {
+  try {
+    const address = await Shipping_address.findById(req.params.id);
+    if (address) {
+      // Check if the updated email already exists and does not belong to the current address
+      if (req.body.email && req.body.email !== address.email) {
+        const existingAddress = await Shipping_address.findOne({ email: req.body.email });
+        if (existingAddress) {
+          return res.status(200).send({
+            message: "Shipping Address Updated Successfully!",
+            data: existingAddress,
+          });
+        }
+      }
+
+      // Update address fields
+      address.name = req.body.name || address.name;
+      address.contact = req.body.contact || address.contact;
+      address.email = req.body.email || address.email;
+      address.address = req.body.address || address.address;
+      address.country = req.body.country || address.country;
+      address.city = req.body.city || address.city;
+      address.Landmark = req.body.Landmark || address.Landmark;
+      address.zipcode = req.body.zipcode || address.zipcode;
+      address.status = req.body.status || address.status;
+      address.defaultAddress = req.body.defaultAddress || address.defaultAddress;
+      address.modified_by = req.body.modified_by || address.modified_by;
+
+      // If defaultAddress is set, update existing default addresses to false
+      if (req.body.defaultAddress) {
+        await Shipping_address.updateMany(
+          { created_by: address.created_by, _id: { $ne: req.params.id }, defaultAddress: true },
+          { $set: { defaultAddress: false } }
+        );
+      }
+
+      // Save updated address
+      const updatedAddress = await address.save();
+      res.status(200).send({
         message: "Shipping Address Updated Successfully!",
+        data: updatedAddress,
       });
     } else {
       res.status(404).send({
-        message: "User not found!",
+        message: "Address not found",
       });
     }
   } catch (err) {
@@ -81,69 +126,42 @@ const updateshippingaddress = async (req, res) => {
   }
 };
 
+// Delete a shipping address
+const deleteshippingaddress = async (req, res) => {
+  try {
+    const address = await Shipping_address.findById(req.params.id);
+    if (address) {
+      // If deleting a defaultAddress, unset defaultAddress for the user
+      if (address.defaultAddress) {
+        await Shipping_address.updateMany(
+          { created_by: address.created_by, _id: { $ne: req.params.id }, defaultAddress: true },
+          { $set: { defaultAddress: false } }
+        );
+      }
 
-
-// const updateshippingaddress = async (req, res) => {
-//   console.log("updateShippinaddress");
-//   try {
-//     const customer = await Shipping_address.findById(req.params.id);
-//     if (customer) {
-//       customer.name = req.body.name;
-//       customer.contact = req.body.contact;
-//       customer.email = req.body.email;
-//       customer.address = req.body.address;
-//       customer.country = req.body.country;
-//       customer.city = req.body.city;
-//       customer.Landmark = req.body.Landmark;
-//       customer.zipcode = req.body.zipcode;
-//       customer.status = req.body.status;
-
-//       // customer.password = bcrypt.hashSync("12345678");
-//       const updatedUser = await customer.save();
-//       const token = signInToken(updatedUser);
-//       res.send({
-//         token,
-//         _id: updatedUser._id,
-//         name: updatedUser.name,
-//         contact: updatedUser.contact,
-//         email: updatedUser.email,
-//         address: updatedUser.address,
-//         country: updatedUser.country,
-//         city: updatedUser.city,
-//         Landmark: updatedUser.Landmark,
-//         zipcode: updatedUser.zipcode,
-//         status: updatedUser.status,
-//         message: "Shipping Address Updated Successfully!",
-//       });
-//     }
-//   } catch (err) {
-//     res.status(404).send({
-//       message: "Your Email is not valid!",
-//     });
-//   }
-// };
-
-const deleteshippingaddress = (req, res) => {
-  Shipping_address.deleteOne({ _id: req.params.id }, (err) => {
-    if (err) {
-      res.status(500).send({
-        message: err.message,
+      // Delete the address
+      await Shipping_address.deleteOne({ _id: req.params.id });
+      res.status(200).send({
+        message: "Shipping Address Deleted Successfully!",
       });
     } else {
-      res.status(200).send({
-        message: "Shipping address Deleted Successfully!",
+      res.status(404).send({
+        message: "Address not found",
       });
     }
-  });
+  } catch (err) {
+    res.status(500).send({
+      message: "An error occurred while deleting the shipping address.",
+      error: err.message,
+    });
+  }
 };
-
-
 
 module.exports = {
   shipping_addressadd,
   getshipping_address,
   getshippingaddressId,
   updateshippingaddress,
-  deleteshippingaddress
-
+  deleteshippingaddress,
 };
+
