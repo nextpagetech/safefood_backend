@@ -1,90 +1,108 @@
-// const mongoose = require("mongoose");
 
+
+
+
+const nodemailer = require('nodemailer');
 // const { sendMails, sendMailsAdmin } = require("../lib/email-sender/sender");
 
-// const emailSend =  (req, res) => {
-//   console.log(1);
- 
-//   const { email ,name, contact} = req.body;
-//   console.log("res1234",email,name);
 
-  
-//   const mailOptions = {
-//     from: process.env.EMAIL_USER,
-//     to: email,
-//       // to:'saip8129@gmail.com',
-//     subject: "Safe Food" ,
-//     text: `Thank you, ${name}, for contacting Safe Food. We will get back to you later.`,
-//   };
+const sendEmails = async (mailOptions, mailAdminOptions) => {
 
-// console.log("mailOptions",mailOptions);
+  const transporter = nodemailer.createTransport({
+    host: process.env.HOST,
+    port: process.env.EMAIL_PORT,
+    secure: false,
+    auth: {
+      user: process.env.EMAIL_USER_NAME,
+      pass: process.env.EMAIL_PASS,
+    },
+    debug:true
+  });
 
+  try {
 
-
-
-//   const mailAdminOptions = {
-//     from: process.env.EMAIL_USER,
-//     to: 'penugondapranathisai11@gmail.com',
-//       // to:'saip8129@gmail.com',
-//     subject: "Safe Food" ,
-//     text: `Dear Admin, ${name}, ${email}, ${contact} has tried to reach us` ,
-//   };
-//   console.log("mailAdminOptions",mailAdminOptions);
-
- 
-   
-//    sendMails(mailOptions,res)
-//    sendMailsAdmin(mailAdminOptions,res) 
-
-  
-// };
-// module.exports = {
-//   emailSend
- 
-// };
+    transporter.verify(function (err, success) {
+      if (err) {
+        // res.status(403).send({
+        //   message: `Error happen when verify ${err.message}`,
+        // });
+        console.log(err.message);
+        return false;
+      } else {
+        console.log("Server is ready to take our messages");
+      }
+    });   
 
 
+    const userResult = await transporter.sendMail(mailOptions, (err, data) => {
+      if (err) {
+        console.log("error mailOptions")
+      }
+    });
 
 
-const mongoose = require("mongoose");
+    const adminResult = await transporter.sendMail(mailAdminOptions, (err, data) => {
+      if (err) {
+        console.log("error mailOptions")
+      }
+    });
 
-const { sendMails, sendMailsAdmin } = require("../lib/email-sender/sender");
+    return true;
+  } catch (error) {
+    console.error("Error sending emails:", error.message);
+    return false;
+  }
+};
 
 const emailSend = async (req, res) => {
-  console.log(1);
+  console.log("Request received");
 
   const { email, name, contact } = req.body;
-  console.log("res1234", email, name);
+  console.log("Request body:", { email, name, contact });
 
   const mailOptions = {
     from: process.env.EMAIL_USER,
     to: email,
-    subject: `Safe Food  ${name}`,
-    text: `Thank you, ${name}, for contacting Safe Food.`,
+    subject: `Hello ${name}`,
+    text: `Thank you, ${name}, for contacting Safe Food. We will get back to you later.`,
   };
-
-  console.log("mailOptions", mailOptions);
 
   const mailAdminOptions = {
     from: process.env.EMAIL_USER,
     to: 'penugondapranathisai11@gmail.com',
-    subject:` Safe Food  ${name}`,
-    text: ` ${name}, ${email}, ${contact} has tried to reach us`,
+    subject: `${name}`,
+    text: `Dear Admin,\n\n${name} (${email}, ${contact}) has tried to reach us.`,
+    html: `
+    <h3>New Contact Form Submission</h3>
+    <table border="1" style="border-collapse: collapse; width: 100%;">
+      <tr>
+        <td style="padding: 8px; text-align: left;"><strong>Name</strong></td>
+        <td style="padding: 8px; text-align: left;">${name}</td>
+      </tr>
+      <tr>
+        <td style="padding: 8px; text-align: left;"><strong>Email</strong></td>
+        <td style="padding: 8px; text-align: left;">${email}</td>
+      </tr>
+      <tr>
+        <td style="padding: 8px; text-align: left;"><strong>Contact</strong></td>
+        <td style="padding: 8px; text-align: left;">${contact}</td>
+      </tr>
+    </table>
+  `,
   };
-  console.log("mailAdminOptions", mailAdminOptions);
 
   try {
-    let user_email = await sendMails(mailOptions);
-    console.log("User email sent successfully.",user_email);
-
-    let admin_email = await sendMailsAdmin(mailAdminOptions);
-    console.log("Admin email sent successfully.",admin_email);
+    const success = await sendEmails(mailOptions, mailAdminOptions);
+    if (success) {
       res.status(200).send("Emails sent successfully.");
-
-
+      console.log("successful")
+    } else {
+      res.status(500).send("Failed to send emails.");
+      console.log("error");
+    }
   } catch (error) {
-    console.error("Error sending emails:", error);
-    res.status(500).send("Failed to send emails.");
+    console.error("Error sending emails:", error.message);
+    res.status(500).send(`Failed to send emails: ${error.message}`);
   }
 };
 
