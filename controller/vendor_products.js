@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const Vendor_product = require("../models/vendor_products");
 const Product = require("../models/Product");
 const { languageCodes } = require("../utils/data");
+const Order = require("../models/Order");
 
 const vendor_productadd = async (req, res) => {
   try {
@@ -326,10 +327,11 @@ const vendorDetailsByProductIds = async (req, res) => {
 
     // Filter the vendor products to include only those that have the product IDs provided
     const filteredVendorProducts = vendorProducts.filter(vendorProduct => {
+      console.log("vendorProduct", vendorProduct);
       console.log("vendorProduct.products", vendorProduct.products);
-      return vendorProduct.products.some(productId => {
-        console.log("productId", productId.toString());
-        return productIds.includes(productId.toString());
+      return vendorProduct.products.some(product => {
+        console.log("product.productId", product.productId.toString());
+        return productIds.includes(product.productId.toString());
       });
     });
 
@@ -340,8 +342,8 @@ const vendorDetailsByProductIds = async (req, res) => {
     }
 
     const vendorDetails = filteredVendorProducts.map(vendorProduct => {
-      const matchingProducts = vendorProduct.products.filter(productId => 
-        productIds.includes(productId.toString())
+      const matchingProducts = vendorProduct.products.filter(product => 
+        productIds.includes(product.productId.toString())
       );
 
       return {
@@ -366,6 +368,109 @@ const vendorDetailsByProductIds = async (req, res) => {
     });
   }
 };
+
+
+
+const getFpoqunatity = async (req, res) => {
+  try {
+    const { productIds } = req.body;
+    console.log("productIdsorder", productIds);
+
+    // Fetch all orders sorted by _id in descending order
+    const orders = await Order.find({}).sort({ _id: -1 });
+    
+    // Iterate through orders to find matches
+    const matchingOrders = orders.filter(order =>
+      order.cart.some(cartItem => productIds.includes(cartItem._id.toString()))
+    );
+    console.log("matchingOrders",matchingOrders)
+
+
+    if (matchingOrders.length === 0) {
+      return res.status(404).send({
+        message: "No orders found with matching product IDs.",
+      });
+    }
+
+    // Prepare the response with the matching orders' details
+    const response = matchingOrders.map(order => ({
+      orderId: order._id,
+      user_info: {
+        name: order.user_info.name,
+        email: order.user_info.email,
+        phone: order.user_info.contact,
+        address: order.user_info.address,
+        city: order.user_info.city,
+        country: order.user_info.country,
+        zipCode: order.user_info.zipCode,
+      },
+      cart: order.cart
+    }));
+
+    res.status(200).send(response);
+
+  } catch (err) {
+    console.error("Error:", err.message);
+    res.status(500).send({
+      message: "An error occurred while fetching vendor details by product IDs.",
+      error: err.message,
+    });
+  }
+};
+
+
+
+
+
+
+
+
+// const getFpoqunatity = async (req, res) => {
+//   try {
+//     const { productIds } = req.body;
+//     console.log("productIdsorder", productIds);
+//     const orders = await Order.find({}).sort({ _id: -1 });
+//     console.log("orders", orders);
+//     const filteredOrderProducts = orders.filter(vendorProduct => {
+//       console.log("vendorProduct", vendorProduct.cart[0]._id);
+//       return vendorProduct.products.some(product => {
+//         console.log("product.productId", product.productId.toString());
+//         return productIds.includes(product.productId.toString());
+//       });
+//     });
+
+//     console.log("filteredVendorProducts", filteredVendorProducts);
+//     if (filteredVendorProducts.length === 0) {
+//       return res.status(404).send({ message: "No vendor products found for the given product IDs." });
+//     }
+//     const vendorDetails = filteredVendorProducts.map(vendorProduct => {
+//       const matchingProducts = vendorProduct.products.filter(product => 
+//         productIds.includes(product.productId.toString())
+//       );
+
+//       return {
+//         vendor: {
+//           _id: vendorProduct._id,
+//           name: vendorProduct.name,
+//           email: vendorProduct.email,
+//           phone: vendorProduct.phone,
+//           image: vendorProduct.image,
+//           status: vendorProduct.status,
+//         },
+//         products: matchingProducts
+//       };
+//     });
+
+//     res.send(vendorDetails);
+//   } catch (err) {
+//     console.error("Error:", err.message);
+//     res.status(500).send({
+//       message: "An error occurred while fetching vendor details by product IDs.",
+//       error: err.message,
+//     });
+//   }
+// };
+
 
 
 
@@ -442,5 +547,6 @@ module.exports = {
   deletevendor_product,
   vendor_productmapadd,
   vendorDetailsByProductIds,
-  vendor_productmapaddupdate,  
+  vendor_productmapaddupdate,
+  getFpoqunatity,  
 };

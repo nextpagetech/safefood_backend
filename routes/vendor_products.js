@@ -9,6 +9,8 @@ const {
     vendor_productmapadd,
     vendor_productmapaddupdate,
     vendorDetailsByProductIds,
+    getFpoqunatity,
+    
 } = require("../controller/vendor_products");
 
 //add a vendor
@@ -16,6 +18,7 @@ const {
 router.post("/vendor_productadd", vendor_productadd);
 
 router.post("/vendor_productmapadd", vendor_productmapadd);
+router.post("/getFpoqunatity", getFpoqunatity);
 router.post("/vendor_productmapaddupdate", vendor_productmapaddupdate);
 router.post("/vendorDetailsByProductIds", vendorDetailsByProductIds);
 
