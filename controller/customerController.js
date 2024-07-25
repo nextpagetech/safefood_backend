@@ -346,14 +346,6 @@ const addShippingAddress = async (req, res) => {
 
 
 
-
-
-
-
-
-
-
-
 const getallShippingAddress = async (req, res) => {
   try {
     const users = await Customer.find({}).sort({ _id: -1 });
@@ -365,8 +357,7 @@ const getallShippingAddress = async (req, res) => {
 
 const getShippingAddress = async (req, res) => {
   try {
-    const customerId = req.params.id;
-   
+    const customerId = req.params.id;  
 
     const customer = await Customer.findById(customerId);
     res.send({ shippingAddress: customer?.shippingAddress });
@@ -376,7 +367,7 @@ const getShippingAddress = async (req, res) => {
     //   const address = customer.shippingAddress.find(
     //     (addr) => addr._id.toString() === addressId.toString()
     //   );
-
+ 
     //   if (!address) {
     //     return res.status(404).send({
     //       message: "Shipping address not found!",

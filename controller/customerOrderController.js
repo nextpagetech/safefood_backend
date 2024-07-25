@@ -174,6 +174,7 @@ const getOrderCustomer = async (req, res) => {
     });
   }
 };
+
 const getOrderById = async (req, res) => {
   try {
     const order = await Order.findById(req.params.id);

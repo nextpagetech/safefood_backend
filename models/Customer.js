@@ -18,6 +18,8 @@ const customerSchema = new mongoose.Schema(
       type: String,
       required: false,
     },
+
+    
     city: {
       type: String,
       required: false,
