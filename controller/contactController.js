@@ -69,7 +69,7 @@ const emailSend = async (req, res) => {
 
   const mailAdminOptions = {
     from: process.env.EMAIL_USER,
-    to: 'penugondapranathisai11@gmail.com',
+    to: process.env.EMAIL_USER,
     subject: `${name}`,
     text: `Dear Admin,\n\n${name} (${email}, ${contact}) has tried to reach us.`,
     html: `
