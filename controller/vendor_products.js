@@ -119,65 +119,69 @@ const vendor_productmapadd = async (req, res) => {
 
 const vendor_productmapaddupdate = async (req, res) => {
   try {
-    const { vendorId, productId, prices, title, variants } = req.body;
-    console.log("Received data:", { vendorId, productId, prices, title, variants });
+    const { vendorId, products } = req.body;
+    console.log("Received data:", { vendorId, products });
 
     if (!vendorId) {
       return res.status(400).send({ message: "vendorId is required!" });
     }
 
-    if (!productId) {
-      return res.status(400).send({ message: "productId is required!" });
+    if (!Array.isArray(products) || products.length === 0) {
+      return res.status(400).send({ message: "products array is required and should not be empty!" });
     }
 
-    if (!prices ||
-        typeof prices.price !== 'number' ||
-        isNaN(parseFloat(prices.originalPrice)) ||
-        typeof prices.discount !== 'number') {
-      return res.status(400).send({ message: "prices should contain price (Number), originalPrice (Number), and discount (Number)!" });
-    }
-
-    const originalPrice = parseFloat(prices.originalPrice);
-
-    if (!title || typeof title.en !== 'string') {
-      return res.status(400).send({ message: "title is required and should contain en (String)!" });
-    }
-
-    const vendorProduct = await Vendor_product.findById(vendorId);
+    let vendorProduct = await Vendor_product.findById(vendorId);
 
     if (!vendorProduct) {
-      return res.status(404).send({ message: "Vendor not found!" });
-    }
-
-    const productIndex = vendorProduct.products.findIndex(product => product.productId.toString() === productId.toString());
-
-    if (productIndex === -1) {
-      return res.status(404).send({ message: "Product not found in the vendor's list!" });
+      // Vendor not found, create a new one
+      vendorProduct = new Vendor_product({
+        _id: vendorId,
+        products: [],
+      });
     } else {
-      vendorProduct.products[productIndex].prices = { ...prices, originalPrice };
-      vendorProduct.products[productIndex].title = title;
-
-      // Handle variants if they are provided
-      if (variants) {
-        vendorProduct.products[productIndex].variants = variants;
-      }
+      // Vendor found, clear existing products
+      vendorProduct.products = [];
     }
+
+    products.forEach(({ productId, prices, title, variants }) => {
+      if (!productId) {
+        throw new Error("productId is required!");
+      }
+
+      if (!prices || typeof prices.price !== 'number') {
+        throw new Error("prices should contain price (Number) and discount (Number)!");
+      }
+
+      if (!title || typeof title.en !== 'string') {
+        throw new Error("title is required and should contain en (String)!");
+      }
+
+      vendorProduct.products.push({
+        productId,
+        prices,
+        title,
+        variants,
+      });
+    });
 
     const updatedVendorProduct = await vendorProduct.save();
 
     res.send({
       _id: updatedVendorProduct._id,
       products: updatedVendorProduct.products,
-      message: "Vendor product updated successfully!",
+      message: "Vendor products updated successfully!",
     });
   } catch (err) {
     console.error("Error:", err.message);
     res.status(500).send({
-      message: "An error occurred while updating the vendor product.",
+      message: "An error occurred while updating the vendor products.",
       error: err.message,
     });
   }
 };
+
+
+
 
 
 

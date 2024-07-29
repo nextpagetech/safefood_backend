@@ -651,6 +651,45 @@ const getDashboardOrders = async (req, res) => {
   }
 };
 
+
+
+const getOrderByIdVendorName = async (req, res) => {
+  try {
+    // Fetch the order details by ID
+    const order = await Order.findById(req.params.id).exec();
+
+    if (!order) {
+      return res.status(404).send({ message: 'Order not found' });
+    }
+
+    // Fetch all vendors
+    const vendors = await Vendor.getAllvendor_product(); // Adjust method name as per actual implementation
+
+    // Create a map for fast vendor lookup by product ID
+    const vendorMap = {};
+    vendors.forEach(vendor => {
+      vendor.products.forEach(product => {
+        vendorMap[product._id] = vendor.name;
+      });
+    });
+
+    // Include vendor name in order details
+    const enrichedOrder = {
+      ...order._doc,
+      products: order.products.map(product => ({
+        ...product,
+        vendorName: vendorMap[product.productId] || 'Unknown Vendor'
+      }))
+    };
+
+    res.send(enrichedOrder);
+
+  } catch (err) {
+    res.status(500).send({
+      message: err.message,
+    });
+  }
+};
 module.exports = {
   getAllOrders,
   getOrderById,
@@ -659,7 +698,8 @@ module.exports = {
   deleteOrder,
   bestSellerProductChart,
   getDashboardOrders,
-  getDashboardRecentOrder,
+  getDashboardRecentOrder,  
   getDashboardCount,
   getDashboardAmount,
+  getOrderByIdVendorName,
 };
