@@ -11,6 +11,7 @@ const {
   getDashboardRecentOrder,
   getDashboardCount,
   getDashboardAmount,
+  getOrderByIdVendorName,
 } = require("../controller/orderController");
 
 //get all orders
@@ -36,6 +37,7 @@ router.get("/customer/:id", getOrderCustomer);
 
 //get a order by id
 router.get("/:id", getOrderById);
+router.get("/:id", getOrderByIdVendorName);
 
 //update a order
 router.put("/:id", updateOrder);
