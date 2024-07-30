@@ -10,6 +10,7 @@ const {
     vendor_productmapaddupdate,
     vendorDetailsByProductIds,
     getFpoqunatity,
+    getVenodrnamebyProductId,
     
 } = require("../controller/vendor_products");
 
@@ -24,6 +25,7 @@ router.post("/vendorDetailsByProductIds", vendorDetailsByProductIds);
 
 //get all vendor
 router.get("/getAllvendor_product", getAllvendor_product);
+router.get("/getVenodrnamebyProductId", getVenodrnamebyProductId);
 
 //get a vendor
 router.get("/:id", getvendor_productId);

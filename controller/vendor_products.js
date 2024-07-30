@@ -205,6 +205,62 @@ const getAllvendor_product = async (req, res) => {
     res.status(500).send({ message: err.message });
   }
 };
+const getVenodrnamebyProductId= async (req, res) => {
+
+  try {
+    const { productIds } = req.body;
+    console.log("Received productIds:", productIds);
+
+    // Fetch all vendor products
+    const vendorProducts = await Vendor_product.find({}).sort({ _id: -1 });
+    console.log("All vendor products:", vendorProducts);
+
+    // Filter the vendor products to include only those that have the product IDs provided
+    const filteredVendorProducts = vendorProducts.filter(vendorProduct =>
+      vendorProduct.products.some(product =>
+        productIds.includes(product.productId.toString())
+      )
+    );
+
+    console.log("Filtered vendor products:", filteredVendorProducts);
+
+    // Find the vendor with the lowest price for each product
+    const productVendorDetails = productIds.map(productId => {
+      const vendorsWithProduct = filteredVendorProducts
+        .map(vendorProduct => {
+          const product = vendorProduct.products.find(
+            product => product.productId.toString() === productId
+          );
+          return product ? {
+            vendorId: vendorProduct.vendorId,
+            vendorName: vendorProduct.vendorName,
+            price: product.price,
+            productId: product.productId.toString()
+          } : undefined;
+        })
+        .filter(vendor => vendor !== undefined);
+
+      if (vendorsWithProduct.length === 0) {
+        return { productId, lowestPriceVendor: null };
+      }
+
+      const lowestPriceVendor = vendorsWithProduct.reduce((prev, curr) =>
+        prev.price < curr.price ? prev : curr
+      );
+
+      return {
+        productId,
+        lowestPriceVendor
+      };
+    });
+
+    console.log("Product vendor details:", productVendorDetails);
+
+    res.status(200).send(productVendorDetails);
+  } catch (err) {
+    res.status(500).send({ message: err.message });
+  }
+};
 
 const getvendor_productId = async (req, res) => {
   try {
@@ -553,4 +609,5 @@ module.exports = {
   vendorDetailsByProductIds,
   vendor_productmapaddupdate,
   getFpoqunatity,  
+  getVenodrnamebyProductId,
 };
