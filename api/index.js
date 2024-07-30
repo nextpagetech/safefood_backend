@@ -19,6 +19,7 @@ const couponRoutes = require("../routes/couponRoutes");
 const attributeRoutes = require("../routes/attributeRoutes");
 const settingRoutes = require("../routes/settingRoutes");
 const currencyRoutes = require("../routes/currencyRoutes");
+const vendornameRoutes = require("../routes/vendorname");
 const languageRoutes = require("../routes/languageRoutes");
 const ourProgramsRoutes = require("../routes/our_programsRoutes"); // Ensure this matches the updated route file
 const notificationRoutes = require("../routes/notificationRoutes");
@@ -52,6 +53,7 @@ app.use("/api/coupon/", couponRoutes);
 app.use("/api/category/", categoryRoutes);
 app.use("/api/shipping/", shippingRoutes);
 app.use("/api/vendor/", vendorRoutes);
+app.use("/api/vendorname/", vendornameRoutes);
 app.use("/api/customer/", customerRoutes);
 app.use("/api/order/", isAuth, customerOrderRoutes);
 app.use("/api/attributes/", attributeRoutes);
