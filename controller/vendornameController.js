@@ -1,12 +1,10 @@
 const mongoose = require("mongoose");
-const Vendor_nameUpdate = require("../models/vendorname");
-
-const { languageCodes } = require("../utils/data");
-
+const VendorNameUpdate = require("../models/vendorname");
+const VendorProducts = require("../models/vendor_products");
 
 const vendor_nameUpdate = async (req, res) => {
   try {
-    const { vendorId, products, vendorname } = req.body;
+    const { vendorId, products } = req.body;
 
     if (!vendorId) {
       return res.status(400).send({ message: "vendorId is required!" });
@@ -19,47 +17,67 @@ const vendor_nameUpdate = async (req, res) => {
         return res.status(400).send({ message: `Invalid productId: ${product.productId}` });
       }
 
-      if (typeof product.title !== 'object') {
-        return res.status(400).send({ message: "Product title must be an object!" });
-      }
-
       if (product.prices) {
-        if (typeof product.prices.price !== 'number' || typeof product.prices.originalPrice !== 'number') {
+        if (typeof product.prices.price !== 'number' || (product.prices.originalPrice && typeof product.prices.originalPrice !== 'number')) {
           return res.status(400).send({ message: "Product prices must be numbers!" });
         }
       }
     }
 
-    const vendorProduct = await Vendor_nameUpdate.findById(vendorId);
+    // Fetch vendor details to get vendorname
+    let vendor = await VendorProducts.findById(vendorId);
+    let vendorname;
 
-    if (!vendorProduct) {
-      return res.status(404).send({ message: "Vendor not found!" });
+    if (vendor) {
+      vendorname = vendor.name; // Assuming 'name' field contains the vendor name
+    } else {
+      // Create a new vendor if not found
+      vendor = new VendorProducts({ _id: vendorId, name: 'New Vendor' }); // Adjust 'New Vendor' as needed
+      await vendor.save();
+      vendorname = vendor.name;
     }
 
-    // Create a map of existing products for quick lookup
-    const existingProductsMap = new Map(vendorProduct.products.map(p => [p.productId.toString(), p]));
+    // Collect updated products
+    const updatedProducts = [];
 
-    // Update existing products and add new ones
+    // Loop through each product to check if it exists and update or add accordingly
     for (const product of products) {
-      if (existingProductsMap.has(product.productId)) {
-        // Update the existing product
-        const existingProduct = existingProductsMap.get(product.productId);
-        existingProduct.title = product.title;
-        existingProduct.prices = product.prices;
-        existingProduct.vendorname = vendorname; // Update the vendor name
+      const vendorProduct = await VendorNameUpdate.findOne({ 'products.productId': product.productId });
+      if (vendorProduct) {
+        // Update the specific product
+        vendorProduct.products = vendorProduct.products.map(p => {
+          if (p.productId.toString() === product.productId) {
+            p.vendorId = vendorId;
+            p.vendorname = vendorname;
+            p.prices = product.prices;
+            updatedProducts.push(p); // Add to updated products
+          }
+          return p;
+        });
+
+        await vendorProduct.save();
       } else {
         // Add the new product
-        product.vendorname = vendorname; // Set the vendor name for the new product
-        vendorProduct.products.push(product);
+        const newProduct = {
+          vendorId: vendorId,
+          vendorname: vendorname,
+          productId: product.productId,
+          prices: product.prices,
+        };
+
+        await VendorNameUpdate.updateOne(
+          { _id: vendorId },
+          { $push: { products: newProduct }},
+          { upsert: true }
+        );
+
+        updatedProducts.push(newProduct); // Add to updated products
       }
     }
 
-    const updatedVendorProduct = await vendorProduct.save();
-
     res.send({
-      _id: updatedVendorProduct._id,
-      products: updatedVendorProduct.products,
-      message: "Vendor Updated Successfully!",
+      message: "Products updated with new vendor details successfully!",
+      updatedProducts: updatedProducts,
     });
   } catch (err) {
     console.error("Error:", err.message);
@@ -71,5 +89,5 @@ const vendor_nameUpdate = async (req, res) => {
 };
 
 module.exports = {
-  vendor_nameUpdate, 
+  vendor_nameUpdate,
 };

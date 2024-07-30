@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
-const vendorproductSchema = new mongoose.Schema(
+const vendorproductnameSchema = new mongoose.Schema(
     {
         vendorId: {
             type: String,
@@ -20,7 +20,7 @@ const vendorproductSchema = new mongoose.Schema(
                 prices: {
                     originalPrice: {
                         type: Number,
-                        required: true,
+                        required: false,
                     },
                     price: {
                         type: Number,
@@ -33,7 +33,7 @@ const vendorproductSchema = new mongoose.Schema(
                 },
                 title: {
                     type: Object,
-                    required: true,
+                    required: false,
                 },
             }
         ],
@@ -53,6 +53,6 @@ const vendorproductSchema = new mongoose.Schema(
     }
 );
 
-const Vendorproduct = mongoose.model("Vendorproduct", vendorproductSchema);
+const Vendorproduct = mongoose.model("Vendorproductname", vendorproductnameSchema);
 
 module.exports = Vendorproduct;
