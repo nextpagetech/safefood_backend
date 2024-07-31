@@ -690,6 +690,68 @@ const getOrderByIdVendorName = async (req, res) => {
     });
   }
 };
+
+
+const getVendorOrderDetails = async (req, res) => {
+  console.log("Request received:", req.params.id);
+  console.log("Request body:", req.body);
+  try {
+   
+
+    // Fetch the order by ID
+    const order = await Order.findById(req.params.id);
+    console.log("Order details:", order);
+
+    if (!order) {
+      console.log("Order not found:", order);
+      return res.status(404).send({ message: "Order not found" });
+    }
+
+    // Extract product IDs from the order's cart
+    const productIds = order.cart.map(item => item.productId);
+    console.log("Extracted product IDs:", productIds);
+
+    // Fetch vendors whose products match the product IDs from the order
+    const vendors = await Vendor.find({
+      'products.productId': { $in: productIds }
+    }).sort({ _id: -1 });
+
+    console.log("Fetched vendors:", vendors);
+
+    // Create a map to hold vendor details by product ID
+    const vendorDetailsMap = {};
+
+    // Iterate over each vendor and map the products to vendor details
+    vendors.forEach(vendor => {
+      vendor.products.forEach(product => {
+        if (productIds.includes(product.productId.toString())) {
+          vendorDetailsMap[product.productId] = {
+            vendorId: vendor._id,
+            vendorName: vendor.name, // Adjust based on your Vendor schema
+            productDetails: product // Include the product details if needed
+          };
+        }
+      });
+    });
+
+    console.log("Vendor details map:", vendorDetailsMap);
+
+    // Prepare the response object
+    const response = {
+      order,
+      vendors: vendorDetailsMap
+    };
+
+    res.send(response);
+
+  } catch (err) {
+    console.error("Error occurred:", err);
+    res.status(500).send({
+      message: err.message,
+    });
+  }
+};
+
 module.exports = {
   getAllOrders,
   getOrderById,
@@ -702,4 +764,5 @@ module.exports = {
   getDashboardCount,
   getDashboardAmount,
   getOrderByIdVendorName,
+  getVendorOrderDetails,
 };

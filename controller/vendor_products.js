@@ -205,18 +205,26 @@ const getAllvendor_product = async (req, res) => {
     res.status(500).send({ message: err.message });
   }
 };
-const getVenodrnamebyProductId= async (req, res) => {
 
+
+
+const getVenodrnamebyProductId
+ = async (req, res) => {
   try {
-    const { productIds } = req.body;
-    console.log("Received productIds:", productIds);
+    // Get product IDs from the query parameter and ensure they are in an array
+    let productIds = req.query.productIds.split(',');
+
+    if (typeof productIds === 'string') {
+      productIds = productIds.split(',');
+    } else if (!Array.isArray(productIds)) {
+      productIds = [productIds];
+    }
 
     // Fetch all vendor products
-    const vendorProducts = await Vendor_product.find({}).sort({ _id: -1 });
-    console.log("All vendor products:", vendorProducts);
+    const vendors = await Vendor_product.find({}).sort({ _id: -1 });
 
-    // Filter the vendor products to include only those that have the product IDs provided
-    const filteredVendorProducts = vendorProducts.filter(vendorProduct =>
+    // Filter vendors that have the requested product IDs
+    const filteredVendorProducts = vendors.filter(vendorProduct =>
       vendorProduct.products.some(product =>
         productIds.includes(product.productId.toString())
       )
@@ -224,43 +232,136 @@ const getVenodrnamebyProductId= async (req, res) => {
 
     console.log("Filtered vendor products:", filteredVendorProducts);
 
-    // Find the vendor with the lowest price for each product
-    const productVendorDetails = productIds.map(productId => {
+    // Find the vendor with the lowest price for each product ID
+    const productVendorDetails = productIds.map(pid => {
+      // Get vendors that have the specific product
       const vendorsWithProduct = filteredVendorProducts
         .map(vendorProduct => {
           const product = vendorProduct.products.find(
-            product => product.productId.toString() === productId
+            product => product.productId.toString() === pid
           );
-          return product ? {
-            vendorId: vendorProduct.vendorId,
-            vendorName: vendorProduct.vendorName,
-            price: product.price,
-            productId: product.productId.toString()
-          } : undefined;
+          if (product) {
+            return {
+              vendorId: vendorProduct._id,
+              vendorName: vendorProduct.name,
+              price: parseFloat(product.prices.price), // Ensure price is a number
+              productId: product.productId.toString()
+            };
+          }
+          return undefined;
         })
         .filter(vendor => vendor !== undefined);
 
+      // Log the matched vendors with product for debugging
+      console.log("vendorsWithProduct for productId", pid, ":", vendorsWithProduct);
+
+      // If no vendor has the product, return null for that product ID
       if (vendorsWithProduct.length === 0) {
-        return { productId, lowestPriceVendor: null };
+        return { productId: pid, lowestPriceVendor: null };
       }
 
+      // Find the vendor with the lowest price for the product
       const lowestPriceVendor = vendorsWithProduct.reduce((prev, curr) =>
         prev.price < curr.price ? prev : curr
       );
+      
+      console.log("lowestPriceVendor for productId", pid, ":", lowestPriceVendor);
 
       return {
-        productId,
-        lowestPriceVendor
+        productId: pid,
+        lowestPriceVendor: {
+          vendorId: lowestPriceVendor.vendorId,
+          vendorName: lowestPriceVendor.vendorName,
+          price: lowestPriceVendor.price
+        }
       };
     });
 
     console.log("Product vendor details:", productVendorDetails);
 
+    // Send the response with the product vendor details
     res.status(200).send(productVendorDetails);
   } catch (err) {
+    // Send an error response in case of failure
     res.status(500).send({ message: err.message });
   }
 };
+
+
+
+
+
+
+
+
+
+
+// const getVenodrnamebyProductId = async (req, res) => {
+//   try {
+//     let productIds = req.query.productIds.split(',');
+
+//     if (typeof productIds === 'string') {
+//       productIds = productIds.split(',');
+//     } else if (!Array.isArray(productIds)) {
+//       productIds = [productIds];
+//     }
+
+//     const vendors = await Vendor_product.find({}).sort({ _id: -1 });
+
+//     const filteredVendorProducts = vendors.filter(vendorProduct =>
+//       vendorProduct.products.some(product =>
+//         productIds.includes(product.productId.toString())
+//       )
+//     );
+//     console.log("Received productIds123:", filteredVendorProducts);
+
+//     const productVendorDetails = productIds.map(pid => {
+//       const vendorsWithProduct = filteredVendorProducts
+//         .map(vendorProduct => {
+//           const product = vendorProduct.products.find(
+//             product => product.productId.toString() === pid
+//           );
+//           console.log("vendorsWithProduct", vendorsWithProduct);
+
+//           return product ? {
+//             vendorId: vendorProduct._id,
+//             vendorName: vendorProduct.name,
+//             price: parseFloat(product.price),  
+//             productId: product.productId.toString()
+//           } : undefined;
+//         })
+//         .filter(vendor => vendor !== undefined);
+
+//       if (vendorsWithProduct.length === 0) {
+//         return { productId: pid, lowestPriceVendor: null };
+//       }
+
+//       const lowestPriceVendor = vendorsWithProduct.reduce((prev, curr) =>
+//         prev.price < curr.price ? prev : curr
+//       );
+// console.log("lowestPriceVendor.vendorName",lowestPriceVendor.vendorName)
+//       return {
+//         productId: pid,
+//         lowestPriceVendor: {
+//           vendorId: lowestPriceVendor.vendorId,
+//           vendorName: lowestPriceVendor.vendorName,
+//           price: lowestPriceVendor.price
+//         }
+//       };
+//     });
+
+//     res.status(200).send(productVendorDetails);
+//   } catch (err) {
+//     res.status(500).send({ message: err.message });
+//   }
+// };
+
+
+
+
+
+
+
 
 const getvendor_productId = async (req, res) => {
   try {

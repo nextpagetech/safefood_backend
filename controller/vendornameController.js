@@ -88,6 +88,74 @@ const vendor_nameUpdate = async (req, res) => {
   }
 };
 
+
+
+const getVendorUpdateByVendorId = async (req, res) => {
+  try {
+    const vendorIds = req.query.vendorIds;
+    console.log('Received vendorIds:', vendorIds);
+
+    // Ensure vendorIds is not empty
+    if (!vendorIds) {
+      return res.status(400).send({
+        message: "vendorIds should be a comma-separated string of IDs.",
+      });
+    }
+
+    // Split the comma-separated string into an array
+    const vendorIdsArray = vendorIds.split(',');
+    console.log("vendorIdsArray", vendorIdsArray);
+
+    // Find vendor products using the array of vendorIds
+    const vendorProducts = await VendorNameUpdate.find({}).sort({ _id: -1 });
+    console.log("Found vendorProducts:", vendorProducts);
+
+    // If no vendor products are found, send a 404 response
+    if (!vendorProducts.length) {
+      return res.status(404).send({
+        message: "Vendors not found with the provided vendorIds.",
+      });
+    }
+
+    // Filter vendor products to match vendorIdsArray
+    const matchedVendors = vendorProducts.filter(vendorProduct => 
+      vendorIdsArray.includes(vendorProduct._id.toString())
+    );
+
+    // If no matching vendors are found, send a 404 response
+    if (!matchedVendors.length) {
+      return res.status(404).send({
+        message: "No vendors found with the provided vendorIds.",
+      });
+    }
+
+    // Prepare the response with the matched vendor products
+    const response = matchedVendors.map(vendorProduct => ({
+      vendorId: vendorProduct._id,
+      vendorname: vendorProduct.vendorname,
+      products: vendorProduct.products,
+    }));
+
+    // Send the vendor products in the response
+    res.send({
+      message: "Vendor products fetched successfully!",
+      vendorProducts: response,
+    });
+  } catch (err) {
+    // Handle any errors that occur during the process
+    console.error("Error:", err.message);
+    res.status(500).send({
+      message: "An error occurred while fetching the vendor product details.",
+      error: err.message,
+    });
+  }
+};
+
+
+
+
+
 module.exports = {
   vendor_nameUpdate,
+  getVendorUpdateByVendorId,
 };
