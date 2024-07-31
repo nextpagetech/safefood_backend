@@ -6,7 +6,7 @@ const vendorproductnameSchema = new mongoose.Schema(
             type: String,
             required: false,
         },
-        vendorname: {
+        name: {
             type: String,
             required: false,
         },

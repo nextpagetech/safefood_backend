@@ -93,6 +93,7 @@ const vendor_nameUpdate = async (req, res) => {
 const getVendorUpdateByVendorId = async (req, res) => {
   try {
     const vendorIds = req.query.vendorIds;
+    // let vendorIds = req.query.vendorIds.split(',');
     console.log('Received vendorIds:', vendorIds);
 
     // Ensure vendorIds is not empty
@@ -121,6 +122,7 @@ const getVendorUpdateByVendorId = async (req, res) => {
     const matchedVendors = vendorProducts.filter(vendorProduct => 
       vendorIdsArray.includes(vendorProduct._id.toString())
     );
+    console.log("matchedVendors",matchedVendors);
 
     // If no matching vendors are found, send a 404 response
     if (!matchedVendors.length) {
@@ -132,7 +134,7 @@ const getVendorUpdateByVendorId = async (req, res) => {
     // Prepare the response with the matched vendor products
     const response = matchedVendors.map(vendorProduct => ({
       vendorId: vendorProduct._id,
-      vendorname: vendorProduct.vendorname,
+      vendorname: vendorProduct.name,
       products: vendorProduct.products,
     }));
 
