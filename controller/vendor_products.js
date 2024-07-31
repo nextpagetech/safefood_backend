@@ -35,16 +35,25 @@ const vendor_productmapadd = async (req, res) => {
     // Validate each product item
     for (const product of products) {
       if (!mongoose.Types.ObjectId.isValid(product.productId)) {
-        return res.status(400).send({ message: `Invalid productId: ${product.productId}` });
+        return res
+          .status(400)
+          .send({ message: `Invalid productId: ${product.productId}` });
       }
 
-      if (typeof product.title !== 'object') {
-        return res.status(400).send({ message: "Product title must be an object!" });
+      if (typeof product.title !== "object") {
+        return res
+          .status(400)
+          .send({ message: "Product title must be an object!" });
       }
 
       if (product.prices) {
-        if (typeof product.prices.price !== 'number' || typeof product.prices.originalPrice !== 'number') {
-          return res.status(400).send({ message: "Product prices must be numbers!" });
+        if (
+          typeof product.prices.price !== "number" ||
+          typeof product.prices.originalPrice !== "number"
+        ) {
+          return res
+            .status(400)
+            .send({ message: "Product prices must be numbers!" });
         }
       }
     }
@@ -56,7 +65,9 @@ const vendor_productmapadd = async (req, res) => {
     }
 
     // Create a map of existing products for quick lookup
-    const existingProductsMap = new Map(vendorProduct.products.map(p => [p.productId.toString(), p]));
+    const existingProductsMap = new Map(
+      vendorProduct.products.map((p) => [p.productId.toString(), p])
+    );
 
     // Update existing products and add new ones
     for (const product of products) {
@@ -87,22 +98,20 @@ const vendor_productmapadd = async (req, res) => {
   }
 };
 
-
-
 // const vendor_productmapadd = async (req, res) => {
 //   try {
 //     const { vendorId, products } = req.body;
 //     console.log("vendorId, products", vendorId, products);
 //     if (!vendorId) {
 //       return res.status(400).send({ message: "vendorId is required!" });
-//     } 
-//     const vendorProduct = await Vendor_product.findById(vendorId);    
+//     }
+//     const vendorProduct = await Vendor_product.findById(vendorId);
 //     if (!vendorProduct) {
 //       return res.status(404).send({ message: "Vendor not found!" });
 //     }
 //     vendorProduct.products = products;
 //   const updatedVendorProduct = await vendorProduct.save();
-    
+
 //     res.send({
 //       _id: updatedVendorProduct._id,
 //       products: updatedVendorProduct.products,
@@ -127,7 +136,11 @@ const vendor_productmapaddupdate = async (req, res) => {
     }
 
     if (!Array.isArray(products) || products.length === 0) {
-      return res.status(400).send({ message: "products array is required and should not be empty!" });
+      return res
+        .status(400)
+        .send({
+          message: "products array is required and should not be empty!",
+        });
     }
 
     let vendorProduct = await Vendor_product.findById(vendorId);
@@ -148,11 +161,13 @@ const vendor_productmapaddupdate = async (req, res) => {
         throw new Error("productId is required!");
       }
 
-      if (!prices || typeof prices.price !== 'number') {
-        throw new Error("prices should contain price (Number) and discount (Number)!");
+      if (!prices || typeof prices.price !== "number") {
+        throw new Error(
+          "prices should contain price (Number) and discount (Number)!"
+        );
       }
 
-      if (!title || typeof title.en !== 'string') {
+      if (!title || typeof title.en !== "string") {
         throw new Error("title is required and should contain en (String)!");
       }
 
@@ -180,23 +195,6 @@ const vendor_productmapaddupdate = async (req, res) => {
   }
 };
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 const getAllvendor_product = async (req, res) => {
   try {
     const vendors = await Vendor_product.find({}).sort({ _id: -1 });
@@ -207,67 +205,48 @@ const getAllvendor_product = async (req, res) => {
 };
 
 
-
-const getVenodrnamebyProductId
- = async (req, res) => {
+const getVenodrnamebyProductId = async (req, res) => {
   try {
-    // Get product IDs from the query parameter and ensure they are in an array
-    let productIds = req.query.productIds.split(',');
+    console.log("R req.query.productIds:",  req.query.productIds);
 
-    if (typeof productIds === 'string') {
-      productIds = productIds.split(',');
-    } else if (!Array.isArray(productIds)) {
-      productIds = [productIds];
+    const productId = req.query.productIds.split(','); 
+      console.log("Received productIds123:", productId);
+    if (typeof productId === 'string') {
+      productId = productId.split(',');
+    } else if (!Array.isArray(productId)) {
+      productId = [productId];
     }
-
-    // Fetch all vendor products
     const vendors = await Vendor_product.find({}).sort({ _id: -1 });
-
-    // Filter vendors that have the requested product IDs
     const filteredVendorProducts = vendors.filter(vendorProduct =>
       vendorProduct.products.some(product =>
-        productIds.includes(product.productId.toString())
+        productId.includes(product.productId.toString())
       )
     );
-
     console.log("Filtered vendor products:", filteredVendorProducts);
-
-    // Find the vendor with the lowest price for each product ID
-    const productVendorDetails = productIds.map(pid => {
-      // Get vendors that have the specific product
+    const productVendorDetails = productId.map(pid => {
       const vendorsWithProduct = filteredVendorProducts
         .map(vendorProduct => {
           const product = vendorProduct.products.find(
             product => product.productId.toString() === pid
           );
-          if (product) {
-            return {
-              vendorId: vendorProduct._id,
-              vendorName: vendorProduct.name,
-              price: parseFloat(product.prices.price), // Ensure price is a number
-              productId: product.productId.toString()
-            };
-          }
-          return undefined;
+          return product ? {
+            vendorId: vendorProduct._id,
+            vendorName: vendorProduct.name,
+            price: product.price,
+            productId: product.productId.toString()
+          } : undefined;
         })
         .filter(vendor => vendor !== undefined);
-
-      // Log the matched vendors with product for debugging
-      console.log("vendorsWithProduct for productId", pid, ":", vendorsWithProduct);
-
-      // If no vendor has the product, return null for that product ID
+      console.log("vendorsWithProduct",vendorsWithProduct);
       if (vendorsWithProduct.length === 0) {
         return { productId: pid, lowestPriceVendor: null };
       }
-
-      // Find the vendor with the lowest price for the product
       const lowestPriceVendor = vendorsWithProduct.reduce((prev, curr) =>
         prev.price < curr.price ? prev : curr
-      );
-      
-      console.log("lowestPriceVendor for productId", pid, ":", lowestPriceVendor);
+      );     
 
       return {
+        vendors:vendors,
         productId: pid,
         lowestPriceVendor: {
           vendorId: lowestPriceVendor.vendorId,
@@ -278,23 +257,11 @@ const getVenodrnamebyProductId
     });
 
     console.log("Product vendor details:", productVendorDetails);
-
-    // Send the response with the product vendor details
     res.status(200).send(productVendorDetails);
   } catch (err) {
-    // Send an error response in case of failure
     res.status(500).send({ message: err.message });
   }
 };
-
-
-
-
-
-
-
-
-
 
 // const getVenodrnamebyProductId = async (req, res) => {
 //   try {
@@ -326,7 +293,7 @@ const getVenodrnamebyProductId
 //           return product ? {
 //             vendorId: vendorProduct._id,
 //             vendorName: vendorProduct.name,
-//             price: parseFloat(product.price),  
+//             price: parseFloat(product.price),
 //             productId: product.productId.toString()
 //           } : undefined;
 //         })
@@ -356,13 +323,6 @@ const getVenodrnamebyProductId
 //   }
 // };
 
-
-
-
-
-
-
-
 const getvendor_productId = async (req, res) => {
   try {
     const customer = await Vendor_product.findById(req.params.id);
@@ -373,7 +333,6 @@ const getvendor_productId = async (req, res) => {
     });
   }
 };
-
 
 // const vendorDetailsByProductIds = async (req, res) => {
 //   try {
@@ -393,11 +352,11 @@ const getvendor_productId = async (req, res) => {
 //     console.log("vendorProducts",vendorProducts);
 
 //     const vendors = vendorProducts.map(vp => ({
-//       vendorId: vp._id.toString(), 
+//       vendorId: vp._id.toString(),
 //       vendorName: vp.name,
 //       products: vp.products,
 //       createdBy: vp.created_by ? vp.created_by.name : '',
-//       modifiedBy: vp.modified_by ? vp.modified_by.name : '', 
+//       modifiedBy: vp.modified_by ? vp.modified_by.name : '',
 //     }));
 
 //     res.send({ vendors });
@@ -409,7 +368,6 @@ const getvendor_productId = async (req, res) => {
 //     });
 //   }
 // };
-
 
 // const vendorDetailsByProductIds = async (req, res) => {
 //   try {
@@ -487,10 +445,10 @@ const vendorDetailsByProductIds = async (req, res) => {
     console.log("vendorProducts", vendorProducts);
 
     // Filter the vendor products to include only those that have the product IDs provided
-    const filteredVendorProducts = vendorProducts.filter(vendorProduct => {
+    const filteredVendorProducts = vendorProducts.filter((vendorProduct) => {
       console.log("vendorProduct", vendorProduct);
       console.log("vendorProduct.products", vendorProduct.products);
-      return vendorProduct.products.some(product => {
+      return vendorProduct.products.some((product) => {
         console.log("product.productId", product.productId.toString());
         return productIds.includes(product.productId.toString());
       });
@@ -499,11 +457,15 @@ const vendorDetailsByProductIds = async (req, res) => {
     console.log("filteredVendorProducts", filteredVendorProducts);
 
     if (filteredVendorProducts.length === 0) {
-      return res.status(404).send({ message: "No vendor products found for the given product IDs." });
+      return res
+        .status(404)
+        .send({
+          message: "No vendor products found for the given product IDs.",
+        });
     }
 
-    const vendorDetails = filteredVendorProducts.map(vendorProduct => {
-      const matchingProducts = vendorProduct.products.filter(product => 
+    const vendorDetails = filteredVendorProducts.map((vendorProduct) => {
+      const matchingProducts = vendorProduct.products.filter((product) =>
         productIds.includes(product.productId.toString())
       );
 
@@ -516,7 +478,7 @@ const vendorDetailsByProductIds = async (req, res) => {
           image: vendorProduct.image,
           status: vendorProduct.status,
         },
-        products: matchingProducts
+        products: matchingProducts,
       };
     });
 
@@ -524,13 +486,12 @@ const vendorDetailsByProductIds = async (req, res) => {
   } catch (err) {
     console.error("Error:", err.message);
     res.status(500).send({
-      message: "An error occurred while fetching vendor details by product IDs.",
+      message:
+        "An error occurred while fetching vendor details by product IDs.",
       error: err.message,
     });
   }
 };
-
-
 
 const getFpoqunatity = async (req, res) => {
   try {
@@ -539,13 +500,14 @@ const getFpoqunatity = async (req, res) => {
 
     // Fetch all orders sorted by _id in descending order
     const orders = await Order.find({}).sort({ _id: -1 });
-    
-    // Iterate through orders to find matches
-    const matchingOrders = orders.filter(order =>
-      order.cart.some(cartItem => productIds.includes(cartItem._id.toString()))
-    );
-    console.log("matchingOrders",matchingOrders)
 
+    // Iterate through orders to find matches
+    const matchingOrders = orders.filter((order) =>
+      order.cart.some((cartItem) =>
+        productIds.includes(cartItem._id.toString())
+      )
+    );
+    console.log("matchingOrders", matchingOrders);
 
     if (matchingOrders.length === 0) {
       return res.status(404).send({
@@ -554,7 +516,7 @@ const getFpoqunatity = async (req, res) => {
     }
 
     // Prepare the response with the matching orders' details
-    const response = matchingOrders.map(order => ({
+    const response = matchingOrders.map((order) => ({
       orderId: order._id,
       user_info: {
         name: order.user_info.name,
@@ -565,26 +527,19 @@ const getFpoqunatity = async (req, res) => {
         country: order.user_info.country,
         zipCode: order.user_info.zipCode,
       },
-      cart: order.cart
+      cart: order.cart,
     }));
 
     res.status(200).send(response);
-
   } catch (err) {
     console.error("Error:", err.message);
     res.status(500).send({
-      message: "An error occurred while fetching vendor details by product IDs.",
+      message:
+        "An error occurred while fetching vendor details by product IDs.",
       error: err.message,
     });
   }
 };
-
-
-
-
-
-
-
 
 // const getFpoqunatity = async (req, res) => {
 //   try {
@@ -605,7 +560,7 @@ const getFpoqunatity = async (req, res) => {
 //       return res.status(404).send({ message: "No vendor products found for the given product IDs." });
 //     }
 //     const vendorDetails = filteredVendorProducts.map(vendorProduct => {
-//       const matchingProducts = vendorProduct.products.filter(product => 
+//       const matchingProducts = vendorProduct.products.filter(product =>
 //         productIds.includes(product.productId.toString())
 //       );
 
@@ -632,17 +587,6 @@ const getFpoqunatity = async (req, res) => {
 //   }
 // };
 
-
-
-
-
-
-
-
-
-
-
-
 const updatevendor_product = async (req, res) => {
   console.log("updateCustomer");
   try {
@@ -655,7 +599,7 @@ const updatevendor_product = async (req, res) => {
       vendorProduct.products = req.body.products;
       vendorProduct.phone = req.body.phone;
       vendorProduct.status = req.body.status;
-      vendorProduct.modified_by = req.body.modified_by || null; 
+      vendorProduct.modified_by = req.body.modified_by || null;
       const updatedVendorProduct = await vendorProduct.save();
 
       res.send({
@@ -683,7 +627,6 @@ const updatevendor_product = async (req, res) => {
   }
 };
 
-
 const deletevendor_product = (req, res) => {
   Vendor_product.deleteOne({ _id: req.params.id }, (err) => {
     if (err) {
@@ -698,8 +641,6 @@ const deletevendor_product = (req, res) => {
   });
 };
 
-
-
 module.exports = {
   vendor_productadd,
   getAllvendor_product,
@@ -709,6 +650,6 @@ module.exports = {
   vendor_productmapadd,
   vendorDetailsByProductIds,
   vendor_productmapaddupdate,
-  getFpoqunatity,  
+  getFpoqunatity,
   getVenodrnamebyProductId,
 };
