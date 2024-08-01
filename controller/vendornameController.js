@@ -5,7 +5,7 @@ const VendorProducts = require("../models/vendor_products");
 const vendor_nameUpdate = async (req, res) => {
   try {
     const { vendorId, vendorName, products } = req.body;
-    console.log("vendorId, products", vendorId, products);
+    console.log("vendorId, vendorName, products", vendorId, vendorName, products);
 
     if (!vendorId) {
       return res.status(400).send({ message: "vendorId is required!" });
@@ -50,11 +50,11 @@ const vendor_nameUpdate = async (req, res) => {
       } else {
         // Add the new product
         const newProduct = {
-          vendorId: vendorId,
-          vendorName: vendorName,
           productId: product.productId,
           prices: product.prices,
-          title: product.title
+          title: product.title,
+          vendorId: vendorId,
+          vendorName: vendorName,
         };
 
         await VendorNameUpdate.updateOne(
@@ -79,6 +79,10 @@ const vendor_nameUpdate = async (req, res) => {
     });
   }
 };
+
+
+
+
 
 // const vendor_nameUpdate = async (req, res) => {
 //   try {
