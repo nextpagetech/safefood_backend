@@ -6,8 +6,7 @@ const Order = require("../models/Order");
 
 const vendor_productadd = async (req, res) => {
   try {
-    console.log("req", req);
-    console.log("req.body", req.body);
+    
     const newVendor_product = new Vendor_product(req.body);
     await newVendor_product.save();
     res.status(200).send({
@@ -90,7 +89,6 @@ const vendor_productmapadd = async (req, res) => {
       message: "Vendor Updated Successfully!",
     });
   } catch (err) {
-    console.error("Error:", err.message);
     res.status(500).send({
       message: "An error occurred while updating the vendor product.",
       error: err.message,
@@ -129,7 +127,6 @@ const vendor_productmapadd = async (req, res) => {
 const vendor_productmapaddupdate = async (req, res) => {
   try {
     const { vendorId, products } = req.body;
-    console.log("Received data:", { vendorId, products });
 
     if (!vendorId) {
       return res.status(400).send({ message: "vendorId is required!" });
@@ -187,7 +184,6 @@ const vendor_productmapaddupdate = async (req, res) => {
       message: "Vendor products updated successfully!",
     });
   } catch (err) {
-    console.error("Error:", err.message);
     res.status(500).send({
       message: "An error occurred while updating the vendor products.",
       error: err.message,
@@ -207,11 +203,8 @@ const getAllvendor_product = async (req, res) => {
 
 const getVenodrnamebyProductId = async (req, res) => {
   try {
-    console.log("R req.query.productIds:", req.query.productIds);
     let productIds = req.query.productIds.split(',');
-    console.log("Received productIds123:", productIds);
     const vendors = await Vendor_product.find({}).sort({ _id: -1 });
-    console.log("vendorsvendors", vendors);
     const productVendorDetails = productIds.map(pid => {
       const vendorsWithProduct = vendors
         .map(vendor => {
@@ -225,7 +218,7 @@ const getVenodrnamebyProductId = async (req, res) => {
           } : null;
         })
         .filter(vendor => vendor !== null);
-      console.log("vendorsWithProduct", vendorsWithProduct);
+    
       if (vendorsWithProduct.length === 0) {
         return { productId: pid, lowestPriceVendor: null };
       }
@@ -243,7 +236,6 @@ const getVenodrnamebyProductId = async (req, res) => {
         }
       };
     });
-    console.log("Product vendor details:", productVendorDetails);
     res.status(200).send(productVendorDetails);
   } catch (err) {
     res.status(500).send({ message: err.message });
@@ -426,24 +418,19 @@ const vendorDetailsByProductIds = async (req, res) => {
   try {
     const { productIds } = req.body;
 
-    console.log("productIds", productIds);
 
     // Fetch all vendor products
     const vendorProducts = await Vendor_product.find({}).sort({ _id: -1 });
 
-    console.log("vendorProducts", vendorProducts);
 
     // Filter the vendor products to include only those that have the product IDs provided
     const filteredVendorProducts = vendorProducts.filter((vendorProduct) => {
-      console.log("vendorProduct", vendorProduct);
-      console.log("vendorProduct.products", vendorProduct.products);
+
       return vendorProduct.products.some((product) => {
-        console.log("product.productId", product.productId.toString());
         return productIds.includes(product.productId.toString());
       });
     });
 
-    console.log("filteredVendorProducts", filteredVendorProducts);
 
     if (filteredVendorProducts.length === 0) {
       return res
@@ -473,7 +460,6 @@ const vendorDetailsByProductIds = async (req, res) => {
 
     res.send(vendorDetails);
   } catch (err) {
-    console.error("Error:", err.message);
     res.status(500).send({
       message:
         "An error occurred while fetching vendor details by product IDs.",
@@ -485,7 +471,6 @@ const vendorDetailsByProductIds = async (req, res) => {
 const getFpoqunatity = async (req, res) => {
   try {
     const { productIds } = req.body;
-    console.log("productIdsorder", productIds);
 
     // Fetch all orders sorted by _id in descending order
     const orders = await Order.find({}).sort({ _id: -1 });
@@ -496,7 +481,6 @@ const getFpoqunatity = async (req, res) => {
         productIds.includes(cartItem._id.toString())
       )
     );
-    console.log("matchingOrders", matchingOrders);
 
     if (matchingOrders.length === 0) {
       return res.status(404).send({
@@ -521,7 +505,6 @@ const getFpoqunatity = async (req, res) => {
 
     res.status(200).send(response);
   } catch (err) {
-    console.error("Error:", err.message);
     res.status(500).send({
       message:
         "An error occurred while fetching vendor details by product IDs.",
@@ -576,8 +559,8 @@ const getFpoqunatity = async (req, res) => {
 //   }
 // };
 
+
 const updatevendor_product = async (req, res) => {
-  console.log("updateCustomer");
   try {
     const vendorProduct = await Vendor_product.findById(req.params.id);
     if (vendorProduct) {
