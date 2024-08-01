@@ -207,61 +207,50 @@ const getAllvendor_product = async (req, res) => {
 
 const getVenodrnamebyProductId = async (req, res) => {
   try {
-    console.log("R req.query.productIds:",  req.query.productIds);
-
-    const productId = req.query.productIds.split(','); 
-      console.log("Received productIds123:", productId);
-    if (typeof productId === 'string') {
-      productId = productId.split(',');
-    } else if (!Array.isArray(productId)) {
-      productId = [productId];
-    }
+    console.log("R req.query.productIds:", req.query.productIds);
+    let productIds = req.query.productIds.split(',');
+    console.log("Received productIds123:", productIds);
     const vendors = await Vendor_product.find({}).sort({ _id: -1 });
-    const filteredVendorProducts = vendors.filter(vendorProduct =>
-      vendorProduct.products.some(product =>
-        productId.includes(product.productId.toString())
-      )
-    );
-    console.log("Filtered vendor products:", filteredVendorProducts);
-    const productVendorDetails = productId.map(pid => {
-      const vendorsWithProduct = filteredVendorProducts
-        .map(vendorProduct => {
-          const product = vendorProduct.products.find(
-            product => product.productId.toString() === pid
-          );
+    console.log("vendorsvendors", vendors);
+    const productVendorDetails = productIds.map(pid => {
+      const vendorsWithProduct = vendors
+        .map(vendor => {
+          const product = vendor.products.find(product => product.productId.toString() === pid);
           return product ? {
-            vendorId: vendorProduct._id,
-            vendorName: vendorProduct.name,
-            price: product.price,
+            vendorId: vendor._id,
+            vendorName: vendor.name,
+            price: product.prices.price,
+            updatedAt: vendor.updatedAt,
             productId: product.productId.toString()
-          } : undefined;
+          } : null;
         })
-        .filter(vendor => vendor !== undefined);
-      console.log("vendorsWithProduct",vendorsWithProduct);
+        .filter(vendor => vendor !== null);
+      console.log("vendorsWithProduct", vendorsWithProduct);
       if (vendorsWithProduct.length === 0) {
         return { productId: pid, lowestPriceVendor: null };
       }
-      const lowestPriceVendor = vendorsWithProduct.reduce((prev, curr) =>
-        prev.price < curr.price ? prev : curr
-      );     
-
+      const lowestPriceVendor = vendorsWithProduct.reduce((prev, curr) => {
+        return prev.price < curr.price ? prev : curr;
+      });
       return {
-        vendors:vendors,
         productId: pid,
+        vendors: vendorsWithProduct,
         lowestPriceVendor: {
           vendorId: lowestPriceVendor.vendorId,
           vendorName: lowestPriceVendor.vendorName,
-          price: lowestPriceVendor.price
+          price: lowestPriceVendor.price,
+          updatedAt: lowestPriceVendor.updatedAt
         }
       };
     });
-
     console.log("Product vendor details:", productVendorDetails);
     res.status(200).send(productVendorDetails);
   } catch (err) {
     res.status(500).send({ message: err.message });
   }
 };
+
+
 
 // const getVenodrnamebyProductId = async (req, res) => {
 //   try {
