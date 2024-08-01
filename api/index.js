@@ -21,10 +21,15 @@ const settingRoutes = require("../routes/settingRoutes");
 const currencyRoutes = require("../routes/currencyRoutes");
 const vendornameRoutes = require("../routes/vendorname");
 const languageRoutes = require("../routes/languageRoutes");
-const ourProgramsRoutes = require("../routes/our_programsRoutes"); // Ensure this matches the updated route file
+const ourProgramsRoutes = require("../routes/our_programsRoutes");
+const PaymentRoutes = require("../routes/PaymentRoutes");
+
+ // Ensure this matches the updated route file
 const notificationRoutes = require("../routes/notificationRoutes");
+
 const { isAuth, isAdmin } = require("../config/auth");
 const contactRoutes = require("../routes/contactRoutes");
+const joinusRoutes = require("../routes/joinusRoutes");
 // const {
 //   getGlobalSetting,
 //   getStoreCustomizationSetting,
@@ -34,13 +39,31 @@ connectDB();
 const app = express();
 
 // We are using this for the express-rate-limit middleware
-// See: https://github.com/nfriedly/express-rate-limit
+// See: https://github.com/nfriedly/express-rate-limit  
 // app.enable('trust proxy');
 app.set("trust proxy", 1);
 
 app.use(express.json({ limit: "4mb" }));
 app.use(helmet());
-app.use(cors());
+// app.use(cors());
+
+app.use(cors({
+  origin: ['http://localhost:4100', 'http://localhost:4100'], // Allow requests from this 
+  
+  methods: 'GET,PUT,POST,DELETE,PATCH,OPTIONS', // Specify the HTTP methods allowed
+  optionsSuccessStatus: 200 // Some legacy browsers (IE11, various SmartTVs) choke on 204
+}));
+
+
+const allowCrossDomain = function (req, res, next) {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'POST, GET, PUT,PATCH, DELETE, OPTIONS, ');
+  res.header('Access-Control-Allow-Credentials', true);
+  res.header('Access-Control-Max-Age', '86400');
+  res.header('Access-Control-Allow-Headers', 'Authorization, X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept');
+  next();
+};
+app.use(allowCrossDomain);
 
 //root route
 app.get("/", (req, res) => {
@@ -66,6 +89,12 @@ app.use("/api/our_programs/", ourProgramsRoutes);
 app.use("/api/admin/", adminRoutes);
 app.use("/api/orders/", orderRoutes);
 app.use("/api/contact/", contactRoutes);
+app.use("/api/joinus/", joinusRoutes);
+app.use("/api/Payment/", PaymentRoutes);
+
+
+
+// app.use("/api/joinus",);
 
 // Use express's default error handling middleware
 app.use((err, req, res, next) => {
