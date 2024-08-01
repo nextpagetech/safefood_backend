@@ -559,6 +559,7 @@ const getFpoqunatity = async (req, res) => {
 //   }
 // };
 
+
 const updatevendor_product = async (req, res) => {
   try {
     const vendorProduct = await Vendor_product.findById(req.params.id);
