@@ -20,11 +20,11 @@ const vendor_nameUpdate = async (req, res) => {
         return res.status(400).send({ message: `Invalid productId: ${product.productId}` });
       }
 
-      if (product.prices) {
-        if (typeof product.prices.price !== 'number' || (product.prices.originalPrice && typeof product.prices.originalPrice !== 'number')) {
-          return res.status(400).send({ message: "Product prices must be numbers!" });
-        }
-      }
+      // if (product.prices) {
+      //   if (typeof product.prices.price !== 'number' || (product.prices.originalPrice && typeof product.prices.originalPrice !== 'number')) {
+      //     return res.status(400).send({ message: "Product prices must be numbers!" });
+      //   }
+      // }
     }
 
     // Collect updated products

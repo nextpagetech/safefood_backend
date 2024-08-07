@@ -158,15 +158,13 @@ const vendor_productmapaddupdate = async (req, res) => {
         throw new Error("productId is required!");
       }
 
-      if (!prices || typeof prices.price !== "number") {
-        throw new Error(
-          "prices should contain price (Number) and discount (Number)!"
-        );
-      }
+      // if (!prices || typeof prices.price !== "number") {
+      //   throw new Error(
+      //     "prices should contain price (Number) and discount (Number)!"
+      //   );
+      // }
 
-      if (!title || typeof title.en !== "string") {
-        throw new Error("title is required and should contain en (String)!");
-      }
+   
 
       vendorProduct.products.push({
         productId,
