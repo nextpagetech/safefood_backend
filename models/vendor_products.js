@@ -35,7 +35,7 @@ const vendorproductSchema = new mongoose.Schema(
         prices: {
           originalPrice: {
             type: Number,
-            required: true,
+            required: false,
           },
           price: {
             type: Number,
@@ -48,7 +48,7 @@ const vendorproductSchema = new mongoose.Schema(
         },
         title: {
           type: Object,
-          required: true,
+          required: false,
         },
       }
     ],
