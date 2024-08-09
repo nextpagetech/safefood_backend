@@ -50,6 +50,7 @@ const loginAdmin = async (req, res) => {
         phone: admin.phone,
         email: admin.email,
         image: admin.image,
+        role:admin.role
       });
     } else {
       res.status(401).send({
