@@ -58,6 +58,7 @@ const adminSchema = new mongoose.Schema(
         "Driver",
         "Security Guard",
         "Accountant",
+        "Vendor"
       ],
     },
     joiningData: {
