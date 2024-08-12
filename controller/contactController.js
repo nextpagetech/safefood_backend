@@ -1,9 +1,5 @@
 
-
-
-
 const nodemailer = require('nodemailer');
-// const { sendMails, sendMailsAdmin } = require("../lib/email-sender/sender");
 
 
 const sendEmails = async (mailOptions, mailAdminOptions) => {
@@ -69,8 +65,7 @@ const emailSend = async (req, res) => {
 
   const mailAdminOptions = {
     from: process.env.EMAIL_USER,
-    // to: process.env.EMAIL_USER,
-    to: 'saip8129@gmail.com',
+    to: process.env.EMAIL_USER,
 
     subject: `${name}`,
     text: `Dear Admin,\n\n${name} (${email}, ${contact}) has tried to reach us.`,
