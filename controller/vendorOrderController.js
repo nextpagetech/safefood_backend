@@ -81,12 +81,14 @@ const capitalizeFirstLetter = (string) => {
 };
 
 const generateEmailTemplate = (vendorName, productDetails) => {
-  // Group products by customer
+  // Group products by customer (email + name + address)
   const customerMap = productDetails.reduce((acc, p) => {
     p.customer.forEach((c) => {
       const capitalizedCustomerName = capitalizeFirstLetter(c.name);
-      if (!acc[c.email]) {
-        acc[c.email] = {
+      const customerKey = `${c.email}-${c.name}-${c.address}`;
+
+      if (!acc[customerKey]) {
+        acc[customerKey] = {
           name: capitalizedCustomerName,
           contact: c.contact,
           email: c.email,
@@ -96,7 +98,8 @@ const generateEmailTemplate = (vendorName, productDetails) => {
           products: [],
         };
       }
-      acc[c.email].products.push({
+
+      acc[customerKey].products.push({
         title: p.title,
         quantity: p.quantity,
         price: p.price,
@@ -109,28 +112,28 @@ const generateEmailTemplate = (vendorName, productDetails) => {
   const customerSections = Object.values(customerMap)
     .map(
       (cust) => `
-    <tr>
-      <td">${cust.products
+      ${cust.products
         .map(
           (p) => `
-        <tr>
-          <td style="border: 1px solid #ddd; padding: 8px;">${p.title}</td>
-          <td style="border: 1px solid #ddd; padding: 8px;">${p.quantity}</td>
-          <td style="border: 1px solid #ddd; padding: 8px;">${p.price}</td>
-        </tr>
-      `
+          <tr>
+            <td style="border: 1px solid #ddd; padding: 8px;">${p.title}</td>
+            <td style="border: 1px solid #ddd; padding: 8px;">${p.quantity}</td>
+            <td style="border: 1px solid #ddd; padding: 8px;">${p.price}</td>
+          </tr>
+        `
         )
         .join("")}
-    </tr>
-    <tr>
-      <td colspan="3" style="border: 1px solid #ddd; padding: 8px;">
-        <strong>Customer:</strong> ${cust.name} - ${cust.contact}, ${
+      <tr>
+        <td colspan="3" style="border: 1px solid #ddd; padding: 8px;">
+          <strong>Customer:</strong> ${cust.name} - ${cust.contact}, ${
         cust.email
       }<br>
-        <strong>Address:</strong> ${cust.address}, ${cust.city}, ${cust.country}
-      </td>
-    </tr>
-  `
+          <strong>Address:</strong> ${cust.address}, ${cust.city}, ${
+        cust.country
+      }
+        </td>
+      </tr>
+    `
     )
     .join("");
 
@@ -151,6 +154,8 @@ const generateEmailTemplate = (vendorName, productDetails) => {
     </table>
   `;
 };
+
+
 
 const vendor_orderadd = async (req, res) => {
   try {

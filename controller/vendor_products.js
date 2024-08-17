@@ -3,6 +3,7 @@ const Vendor_product = require("../models/vendor_products");
 const Product = require("../models/Product");
 const { languageCodes } = require("../utils/data");
 const Order = require("../models/Order");
+const admin = require("../models/Admin")
 
 const vendor_productadd = async (req, res) => {
   try {
@@ -193,7 +194,17 @@ const vendor_productmapadd = async (req, res) => {
 
 const vendor_productmapaddupdate = async (req, res) => {
   try {
-    const { vendorId, products, email } = req.body;
+    const { vendorId, products } = req.body;
+
+    // Fetch vendor data from the admin table
+    const vendordata = await admin.findById(vendorId);
+
+    if (!vendordata) {
+      return res.status(404).send({ message: "Vendor not found in the admin table!" });
+    }
+
+    const email = vendordata.email;
+    const name = vendordata.name;
 
     if (!vendorId) {
       return res.status(400).send({ message: "vendorId is required!" });
@@ -213,15 +224,18 @@ const vendor_productmapaddupdate = async (req, res) => {
       // Vendor not found, create a new one
       vendorProduct = new Vendor_product({
         _id: vendorId,
-        email, // Include the email field
+        email,
+        name,
         products: [],
       });
     } else {
-      // Vendor found, update the email and clear existing products
+      // Vendor found, update the email, name, and clear existing products
       vendorProduct.email = email;
+      vendorProduct.name = name;
       vendorProduct.products = [];
     }
 
+    // Add the new products to the vendor's product list
     products.forEach(({ productId, stock, prices, title, variants }) => {
       if (!productId) {
         throw new Error("productId is required!");
@@ -236,14 +250,17 @@ const vendor_productmapaddupdate = async (req, res) => {
       });
     });
 
+    // Save the updated or newly created vendor product mapping
     const updatedVendorProduct = await vendorProduct.save();
 
     res.send({
       _id: updatedVendorProduct._id,
       email: updatedVendorProduct.email,
+      name: updatedVendorProduct.name,
       products: updatedVendorProduct.products,
       message: "Vendor products updated successfully!",
     });
+
   } catch (err) {
     if (err.code === 11000) {
       return res.status(400).send({
@@ -257,6 +274,7 @@ const vendor_productmapaddupdate = async (req, res) => {
     });
   }
 };
+
 
 
 const getAllvendor_product = async (req, res) => {
