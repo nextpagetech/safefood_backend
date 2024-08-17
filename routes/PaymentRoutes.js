@@ -3,19 +3,21 @@ const router = express.Router();
 const {
     createPayment,
     getPayments,
+    getOrderById,
     getPaymentById,
     updatePayment,
     deletePayment,
-    createPayments,
     getSingleOrderPayments,
+    createPayments,
 } = require('../controller/paymentController');
 
 // Create a new payment
 router.post('/createpayment', createPayment);
 
+router.get('/getSingleOrderPayments', getSingleOrderPayments);
+
 // Get all payments with optional filtering by date
 router.get('/getall', getPayments);
-router.get('/getSingleOrderPayments', getSingleOrderPayments);
 
 // Get a payment by ID
 router.get('/:id', getPaymentById);
@@ -25,6 +27,7 @@ router.put('/:id', updatePayment);
 
 // Delete a payment by ID
 router.delete('/:id', deletePayment);
+
 
 module.exports = router;
 
