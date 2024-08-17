@@ -606,6 +606,19 @@ const searchProducts = async (req, res) => {
   }
 };
 
+const getAllProductsPopup = async (req, res) => {
+ 
+  try {
+    const products = await Product.find({}).sort({ _id: -1 });
+   res.send(products);
+  } catch (err) {
+    // console.log("error", err);
+    res.status(500).send({
+      message: err.message,
+    });
+  }
+};
+
 module.exports = {
   addProduct,
   addAllProducts,
@@ -623,4 +636,5 @@ module.exports = {
   searchProducts,
   getAllProductsVendor,
   updateProductVendor,
+  getAllProductsPopup,
 };

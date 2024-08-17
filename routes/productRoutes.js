@@ -16,6 +16,7 @@ const {
   getShowingStoreProducts,
   getAllProductsVendor,
   updateProductVendor,
+  getAllProductsPopup,
 } = require("../controller/productController");
 
 //add a product
@@ -57,5 +58,7 @@ router.delete("/:id", deleteProduct);
 
 //delete many product
 router.patch("/delete/many", deleteManyProducts);
+
+router.get("/get", getAllProductsPopup);
 
 module.exports = router;
