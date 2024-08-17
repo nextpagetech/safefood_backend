@@ -124,20 +124,87 @@ const vendor_productmapadd = async (req, res) => {
 //   }
 // };
 
+// const vendor_productmapaddupdate = async (req, res) => {
+//   try {
+//     const { vendorId, products } = req.body;
+//     console.log("req.bodyreq.body",req.body);
+
+//     if (!vendorId) {
+//       return res.status(400).send({ message: "vendorId is required!" });
+//     }
+
+//     if (!Array.isArray(products) || products.length === 0) {
+//       return res
+//         .status(400)
+//         .send({
+//           message: "products array is required and should not be empty!",
+//         });
+//     }
+
+//     let vendorProduct = await Vendor_product.findById(vendorId);
+
+//     if (!vendorProduct) {
+//       // Vendor not found, create a new one
+//       vendorProduct = new Vendor_product({
+//         _id: vendorId,
+//         products: [],
+//       });
+//     } else {
+//       // Vendor found, clear existing products
+//       vendorProduct.products = [];
+//     }
+
+//     products.forEach(({ productId,stock, prices, title, variants }) => {
+//       if (!productId) {
+//         throw new Error("productId is required!");
+//       }
+
+//       // if (!prices || typeof prices.price !== "number") {
+//       //   throw new Error(
+//       //     "prices should contain price (Number) and discount (Number)!"
+//       //   );
+//       // }
+
+   
+
+//       vendorProduct.products.push({
+//         productId,
+//         stock,
+//         prices,
+//         title,
+//         variants,
+//       });
+//     });
+
+//     const updatedVendorProduct = await vendorProduct.save();
+
+//     res.send({
+//       _id: updatedVendorProduct._id,
+//       products: updatedVendorProduct.products,
+//       message: "Vendor products updated successfully!",
+//     });
+//   } catch (err) {
+//     res.status(500).send({
+//       message: "An error occurred while updating the vendor products.",
+//       error: err.message,
+//     });
+//   }
+// };
+
 const vendor_productmapaddupdate = async (req, res) => {
   try {
-    const { vendorId, products } = req.body;
+    const { vendorId, products, email } = req.body;
 
     if (!vendorId) {
       return res.status(400).send({ message: "vendorId is required!" });
     }
 
     if (!Array.isArray(products) || products.length === 0) {
-      return res
-        .status(400)
-        .send({
-          message: "products array is required and should not be empty!",
-        });
+      return res.status(400).send({ message: "products array is required and should not be empty!" });
+    }
+
+    if (!email) {
+      return res.status(400).send({ message: "Email is required!" });
     }
 
     let vendorProduct = await Vendor_product.findById(vendorId);
@@ -146,28 +213,23 @@ const vendor_productmapaddupdate = async (req, res) => {
       // Vendor not found, create a new one
       vendorProduct = new Vendor_product({
         _id: vendorId,
+        email, // Include the email field
         products: [],
       });
     } else {
-      // Vendor found, clear existing products
+      // Vendor found, update the email and clear existing products
+      vendorProduct.email = email;
       vendorProduct.products = [];
     }
 
-    products.forEach(({ productId, prices, title, variants }) => {
+    products.forEach(({ productId, stock, prices, title, variants }) => {
       if (!productId) {
         throw new Error("productId is required!");
       }
 
-      // if (!prices || typeof prices.price !== "number") {
-      //   throw new Error(
-      //     "prices should contain price (Number) and discount (Number)!"
-      //   );
-      // }
-
-   
-
       vendorProduct.products.push({
         productId,
+        stock,
         prices,
         title,
         variants,
@@ -178,16 +240,24 @@ const vendor_productmapaddupdate = async (req, res) => {
 
     res.send({
       _id: updatedVendorProduct._id,
+      email: updatedVendorProduct.email,
       products: updatedVendorProduct.products,
       message: "Vendor products updated successfully!",
     });
   } catch (err) {
+    if (err.code === 11000) {
+      return res.status(400).send({
+        message: "Duplicate email error. The email must be unique.",
+        error: err.message,
+      });
+    }
     res.status(500).send({
       message: "An error occurred while updating the vendor products.",
       error: err.message,
     });
   }
 };
+
 
 const getAllvendor_product = async (req, res) => {
   try {

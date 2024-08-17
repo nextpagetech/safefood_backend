@@ -32,6 +32,10 @@ const vendorproductSchema = new mongoose.Schema(
           ref: 'Product',
           required: false,
         },
+        stock: {
+          type: Number,
+          required: false,
+        },
         prices: {
           originalPrice: {
             type: Number,
@@ -50,6 +54,11 @@ const vendorproductSchema = new mongoose.Schema(
           type: Object,
           required: false,
         },
+        orderId: {  // Added field
+          type: mongoose.Schema.Types.ObjectId,
+          ref: 'Order',
+          required: false
+        }
       }
     ],
     status: {

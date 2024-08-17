@@ -1,4 +1,5 @@
 const Order = require("../models/Order");
+const Product = require("../models/Product");
 
 const getAllOrders = async (req, res) => {
   const {
@@ -122,6 +123,67 @@ const getAllOrders = async (req, res) => {
     res.status(500).send({
       message: err.message,
     });
+  }
+};
+
+const getOrderAdminInvoiceById = async (req, res) => {
+  try {
+    const { id, productId, quantity } = req.body;
+    console.log("req.body123:", req.body);
+
+    const order = await Order.findById(id);
+    if (!order) {
+      return res.status(404).send({ message: "Order not found." });
+    }
+
+    console.log("order.cart:", order.cart);
+    const productIdString = productId.toString();
+    const productInCart = order.cart.find((item) => item.productId.toString() === productIdString);
+    console.log("productIdString:", productIdString);
+    console.log("productInCart:", productInCart);
+
+    if (productInCart) {
+      return res.status(400).send({ message: "Product already exists in the cart." });
+    } else {
+      const product = await Product.findById(productId)
+        .populate({ path: "category", select: "_id name" })
+        .populate({ path: "categories", select: "_id name" });
+
+      if (!product) {
+        return res.status(404).send({ message: "Product not found." });
+      }
+
+      // Log the fetched product to check the fields
+      console.log("Fetched product:", product);
+
+      const newCartItem = {
+        prices: product.prices || {}, // Use an empty object as fallback
+        image: product.image || [], // Use an empty array as fallback
+        tag: product.tag || [], // Use an empty array as fallback
+        status: product.status || "unknown", // Default status if not present
+        productId: product._id.toString(),
+        _id: product._id.toString(),
+        title: product.title.en || "Untitled", // Default title if not present
+        category: product.category || { _id: null, name: "Uncategorized" }, // Default category if not present
+        stock: product.stock || 0, // Default stock if not present
+        isCombination: product.isCombination || false, // Default to false
+        price: product.prices.price || 0, // Default price to 0
+        originalPrice: product.prices.originalPrice || 0, // Default original price to 0
+        quantity: quantity, // Use the quantity provided in the request body
+        itemTotal: (product.prices.price || 0) * quantity, // Calculate the total for this item
+        
+      };
+
+      console.log("newCartItem:", newCartItem); // Log the newCartItem object
+      
+
+      order.cart.push(newCartItem);
+      order.cart.total = order.cart.reduce((sum, item) => sum + item.itemTotal, 0);
+      await order.save();
+      res.send(order);
+    }
+  } catch (err) {
+    res.status(500).send({ message: err.message });
   }
 };
 
@@ -752,12 +814,69 @@ const getVendorOrderDetails = async (req, res) => {
   }
 };
 
+const getOrderUpdateAdminInvoiceById = async (req, res) => {
+  
+  try {
+    console.log("Starting getOrderUpdateAdminInvoiceById");
+
+    const { id, productId, quantity } = req.body;
+
+    const sanitizedProductId = productId.trim().replace(/^,/, '');
+
+    console.log("Sanitized Product ID:", sanitizedProductId);
+    console.log("Request Body:", req.body);
+
+    const order = await Order.findById(id);
+
+    if (!order) {
+      return res.status(404).send({ message: "Order not found." });
+    }
+
+    console.log("order.cart:", order.cart);
+
+    const productInCart = order.cart.find(
+      (item) => item.productId.toString() === sanitizedProductId
+    );
+
+    console.log("productInCart:", productInCart);
+
+    if (!productInCart) {
+      return res.status(404).send({ message: "Product not found in the cart." });
+    }
+
+    console.log("Before update:", productInCart);
+
+    productInCart.quantity = Number(quantity); 
+    productInCart.itemTotal = productInCart.quantity * productInCart.prices.price;
+
+    order.markModified('cart');
+
+    order.subTotal = order.cart.reduce((acc, item) => acc + item.itemTotal, 0);
+    order.total = order.subTotal + 60; 
+
+    order.status = order.status || "Pending"; 
+
+    const updatedOrder = await order.save();
+
+    console.log("Updated order:", updatedOrder);
+
+    res.send(updatedOrder);
+
+    console.log("Order updated successfully");
+
+  } catch (err) {
+    console.error("Error updating order:", err);
+    res.status(500).send({ message: err.message });
+  }
+};
+
 module.exports = {
   getAllOrders,
   getOrderById,
   getOrderCustomer,
   updateOrder,
   deleteOrder,
+  getOrderAdminInvoiceById,
   bestSellerProductChart,
   getDashboardOrders,
   getDashboardRecentOrder,  
@@ -765,4 +884,5 @@ module.exports = {
   getDashboardAmount,
   // getOrderByIdVendorName,
   getVendorOrderDetails,
+  getOrderUpdateAdminInvoiceById,
 };
