@@ -175,6 +175,9 @@ const vendor_orderadd = async (req, res) => {
                 console.warn("Product ID is missing:", product);
                 return;
               }
+              if (product.orderIds && Array.isArray(product.orderIds)) {
+                product.orderIds = product.orderIds.map(orderId => ({ id: orderId }));
+              }
 
               // Check if the product already exists in any VendorOrder document
               const existingOrder = await VendorOrder.findOne({
@@ -210,6 +213,7 @@ const vendor_orderadd = async (req, res) => {
                       "products.$.displayVendorID": product.displayVendorID,
                       "products.$.displayVendorName": product.displayVendorName,
                       "products.$.displayPrice": product.displayPrice,
+                      'products.$.orderIds': product.orderIds,
                       "products.$.updatedAt": new Date(),
                     },
                   }
