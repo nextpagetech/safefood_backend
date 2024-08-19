@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const Vendor_product = require("../models/vendor_products");
+const Vendor_order = require("../models/vendorOrder");
 const Product = require("../models/Product");
 const { languageCodes } = require("../utils/data");
 const Order = require("../models/Order");
@@ -19,6 +20,41 @@ const vendor_productadd = async (req, res) => {
     });
   }
 };
+
+
+const getvendor_IdOrderDetails = async (req, res) => {
+  try {
+    const { displayVendorID } = req.body;
+    console.log("displayVendorID:", displayVendorID);
+
+    // Check if there's an order with the provided displayVendorID inside the products array
+    const vendorOrder = await Vendor_order.findOne({
+      'products.displayVendorID': displayVendorID
+    });
+    
+    console.log("vendorOrder:", vendorOrder);
+
+    if (vendorOrder) {
+      // If a matching order is found, return it
+      res.status(200).send({
+        message: "Vendor Order Details Found Successfully!",
+        data: vendorOrder,
+      });
+    } else {
+      // If no matching order is found, return a 404 status
+      res.status(404).send({
+        message: "Vendor Order Details Not Found!",
+      });
+    }
+  } catch (err) {
+    // Handle any errors
+    res.status(500).send({
+      message: err.message,
+    });
+  }
+};
+
+
 
 const vendor_productmapadd = async (req, res) => {
   try {
@@ -710,4 +746,5 @@ module.exports = {
   vendor_productmapaddupdate,
   getFpoqunatity,
   getVenodrnamebyProductId,
+  getvendor_IdOrderDetails,
 };

@@ -10,6 +10,13 @@ const userInfoSchema = new mongoose.Schema({
   city: { type: String, required: true }
 });
 
+const orderInfoSchema = new mongoose.Schema({
+  id: {
+    type: mongoose.Schema.Types.ObjectId, // Use ObjectId if these are references, or use String if they are simple strings
+    required: true
+  }
+});
+
 // Create a sparse index on the email field
 userInfoSchema.index({ email: 1 }, { unique: true, sparse: true });
 
@@ -21,6 +28,7 @@ const productSchema = new mongoose.Schema({
     required: false, // Make sure your application logic handles optional references
   },
   userInfos: [userInfoSchema],
+  orderIds: [orderInfoSchema],
   carts: { type: [Number], required: false }, // Add carts as an array of numbers
   image: [String],
   title: { type: String, required: true },
