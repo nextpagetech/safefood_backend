@@ -32,13 +32,27 @@ const getvendor_IdOrderDetails = async (req, res) => {
       'products.displayVendorID': displayVendorID
     });
     
-    console.log("vendorOrder:", vendorOrder);
-
     if (vendorOrder) {
-      // If a matching order is found, return it
+      let allOrderIds = [];
+      
+      // Iterate over the products array to find the matching product and gather orderIds
+      vendorOrder.products.forEach(product => {
+        if (product.displayVendorID === displayVendorID) {
+          const orderIds = product.orderIds.map(order => order.id);
+          allOrderIds = allOrderIds.concat(orderIds);
+          console.log(`Order IDs for product: ${product.title}`, orderIds);
+        }
+      });
+
+      // Find all orders with the gathered IDs
+      const orderDetails = await Order.find({ _id: { $in: allOrderIds } });
+      console.log("Order Details:", orderDetails);
+
+      // If a matching order is found, return it along with order details
       res.status(200).send({
         message: "Vendor Order Details Found Successfully!",
         data: vendorOrder,
+        orderDetails: orderDetails,
       });
     } else {
       // If no matching order is found, return a 404 status
@@ -53,6 +67,9 @@ const getvendor_IdOrderDetails = async (req, res) => {
     });
   }
 };
+
+
+
 
 
 
@@ -232,16 +249,6 @@ const vendor_productmapaddupdate = async (req, res) => {
   try {
     const { vendorId, products } = req.body;
 
-    // Fetch vendor data from the admin table
-    const vendordata = await admin.findById(vendorId);
-
-    if (!vendordata) {
-      return res.status(404).send({ message: "Vendor not found in the admin table!" });
-    }
-
-    const email = vendordata.email;
-    const name = vendordata.name;
-
     if (!vendorId) {
       return res.status(400).send({ message: "vendorId is required!" });
     }
@@ -250,8 +257,12 @@ const vendor_productmapaddupdate = async (req, res) => {
       return res.status(400).send({ message: "products array is required and should not be empty!" });
     }
 
-    if (!email) {
-      return res.status(400).send({ message: "Email is required!" });
+    // Attempt to fetch the vendor data
+    let vendordata = null;
+    try {
+      vendordata = await admin.findById(vendorId);
+    } catch (error) {
+      // Handle the case where vendordata cannot be retrieved
     }
 
     let vendorProduct = await Vendor_product.findById(vendorId);
@@ -260,14 +271,10 @@ const vendor_productmapaddupdate = async (req, res) => {
       // Vendor not found, create a new one
       vendorProduct = new Vendor_product({
         _id: vendorId,
-        email,
-        name,
         products: [],
       });
     } else {
-      // Vendor found, update the email, name, and clear existing products
-      vendorProduct.email = email;
-      vendorProduct.name = name;
+      // Vendor found, clear existing products
       vendorProduct.products = [];
     }
 
@@ -286,16 +293,27 @@ const vendor_productmapaddupdate = async (req, res) => {
       });
     });
 
+    // If vendordata exists, update the vendor's email and name
+    if (vendordata) {
+      vendorProduct.email = vendordata.email || vendorProduct.email; // Update only if email exists
+      vendorProduct.name = vendordata.name || vendorProduct.name; // Update only if name exists
+    }
+
     // Save the updated or newly created vendor product mapping
     const updatedVendorProduct = await vendorProduct.save();
 
-    res.send({
+    const response = {
       _id: updatedVendorProduct._id,
-      email: updatedVendorProduct.email,
-      name: updatedVendorProduct.name,
       products: updatedVendorProduct.products,
       message: "Vendor products updated successfully!",
-    });
+    };
+
+    if (vendordata) {
+      response.email = vendordata.email;
+      response.name = vendordata.name;
+    }
+
+    res.send(response);
 
   } catch (err) {
     if (err.code === 11000) {
@@ -310,6 +328,7 @@ const vendor_productmapaddupdate = async (req, res) => {
     });
   }
 };
+
 
 
 
