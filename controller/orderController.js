@@ -170,15 +170,14 @@ const getOrderAdminInvoiceById = async (req, res) => {
         price: product.prices.price || 0, // Default price to 0
         originalPrice: product.prices.originalPrice || 0, // Default original price to 0
         quantity: quantity, // Use the quantity provided in the request body
-        itemTotal: (product.prices.price || 0) * quantity, // Calculate the total for this item
-        
+        itemTotal: (product.prices.price || 0) * quantity, 
+       // Calculate the total for this item
       };
 
       console.log("newCartItem:", newCartItem); // Log the newCartItem object
-      
 
       order.cart.push(newCartItem);
-      order.cart.total = order.cart.reduce((sum, item) => sum + item.itemTotal, 0);
+      order.total = order.cart.reduce((sum, item) => sum + item.itemTotal, 0);
       await order.save();
       res.send(order);
     }
