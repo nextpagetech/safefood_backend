@@ -78,6 +78,7 @@ app.use("/api/category/", categoryRoutes);
 app.use("/api/shipping/", shippingRoutes);
 app.use("/api/vendor/", vendorRoutes);
 app.use("/api/vendorname/", vendornameRoutes);
+
 app.use("/api/customer/", customerRoutes);
 app.use("/api/order/", isAuth, customerOrderRoutes);
 app.use("/api/attributes/", attributeRoutes);
