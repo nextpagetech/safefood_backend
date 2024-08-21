@@ -54,6 +54,10 @@ const vendorproductSchema = new mongoose.Schema(
           type: Object,
           required: false,
         },
+        status:{
+          type: String,
+          required: false,
+        },
         orderId: {  // Added field
           type: mongoose.Schema.Types.ObjectId,
           ref: 'Order',

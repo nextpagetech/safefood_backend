@@ -33,6 +33,7 @@ const productSchema = new mongoose.Schema({
   image: [String],
   title: { type: String, required: true },
   quantity: { type: Number, required: true },
+  status:{ type: String, required: true },
   sales: { type: Number, required: false },
   price: { type: Number, required: true },
   totalQuantity: { type: Number, required: true },

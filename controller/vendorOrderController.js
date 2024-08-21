@@ -8,7 +8,7 @@ const validateEmail = (email) => {
   return re.test(String(email).toLowerCase());
 };
 
-const sendEmails = async (mailOptions) => {
+const sendEmails = async (mailOptions1) => {
   const transporter = nodemailer.createTransport({
     host: process.env.HOST,
     port: process.env.EMAIL_PORT,
@@ -22,17 +22,17 @@ const sendEmails = async (mailOptions) => {
 
   try {
     // Validate `from` address
-    if (!mailOptions.from || !validateEmail(mailOptions.from)) {
+    if (!mailOptions1.from || !validateEmail(mailOptions1.from)) {
       throw new Error("Invalid MAIL FROM address provided");
     }
 
     // Validate `to` address
-    if (!mailOptions.to || !validateEmail(mailOptions.to)) {
+    if (!mailOptions1.to || !validateEmail(mailOptions1.to)) {
       throw new Error("Invalid MAIL TO address provided");
     }
 
     await transporter.verify(); // Check connection configuration
-    await transporter.sendMail(mailOptions);
+    await transporter.sendMail(mailOptions1);
     console.log("Email sent successfully");
     return true;
   } catch (error) {
@@ -102,7 +102,7 @@ const generateEmailTemplate = (vendorName, productDetails) => {
       acc[customerKey].products.push({
         title: p.title,
         quantity: p.quantity,
-        price: p.price,
+        price: p.displayPrice,
       });
     });
     return acc;
@@ -113,24 +113,22 @@ const generateEmailTemplate = (vendorName, productDetails) => {
     .map(
       (cust) => `
       ${cust.products
-        .map(
-          (p) => `
+          .map(
+            (p) => `
           <tr>
             <td style="border: 1px solid #ddd; padding: 8px;">${p.title}</td>
             <td style="border: 1px solid #ddd; padding: 8px;">${p.quantity}</td>
             <td style="border: 1px solid #ddd; padding: 8px;">${p.price}</td>
           </tr>
         `
-        )
-        .join("")}
+          )
+          .join("")}
       <tr>
         <td colspan="3" style="border: 1px solid #ddd; padding: 8px;">
-          <strong>Customer:</strong> ${cust.name} - ${cust.contact}, ${
-        cust.email
-      }<br>
-          <strong>Address:</strong> ${cust.address}, ${cust.city}, ${
-        cust.country
-      }
+          <strong>Customer:</strong> ${cust.name} - ${cust.contact}, ${cust.email
+        }<br>
+          <strong>Address:</strong> ${cust.address}, ${cust.city}, ${cust.country
+        }
         </td>
       </tr>
     `
@@ -191,9 +189,10 @@ const vendor_orderadd = async (req, res) => {
                   {
                     $set: {
                       "products.$.prices": product.prices,
+                      "products.$.status": "unshow",
                       "products.$.image": product.image,
                       "products.$.tag": product.tag,
-                      "products.$.status": product.status,
+                      // "products.$.status": product.status,
                       "products.$.sku": product.sku,
                       "products.$.barcode": product.barcode,
                       "products.$.title": product.title,
@@ -241,6 +240,7 @@ const vendor_orderadd = async (req, res) => {
                   vendorEmails = vendorDetails.email;
                 }
               }
+              console.log("vendorEmailsvendorEmails", vendorEmails);
             } catch (err) {
               console.error("Error updating or creating vendor order:", err);
               throw err;
@@ -254,6 +254,7 @@ const vendor_orderadd = async (req, res) => {
             title: p.title,
             quantity: p.quantity,
             price: p.price,
+            displayPrice: p.displayPrice,
             customer: p.userInfos.map((u) => ({
               name: u.name,
               contact: u.contact,
@@ -387,8 +388,8 @@ const vendor_ordergetId = async (req, res) => {
     const vendorData = await VendorOrder.find({
       "products.displayVendorID": vendorId
     }).exec();
-     console.log("vendorData111",vendorData);
-     
+    console.log("vendorData111", vendorData);
+
     // Check if data is found
     if (!vendorData || vendorData.length === 0) {
       return res.status(404).send({ message: "No orders found for the given vendor." });
