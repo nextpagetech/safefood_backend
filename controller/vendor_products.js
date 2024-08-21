@@ -346,6 +346,7 @@ const vendor_productmapaddupdate = async (req, res) => {
         prices,
         title,
         variants,
+        status:"unshow",
       });
     });
 
