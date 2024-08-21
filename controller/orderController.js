@@ -170,7 +170,8 @@ const getOrderAdminInvoiceById = async (req, res) => {
         price: product.prices.price || 0, // Default price to 0
         originalPrice: product.prices.originalPrice || 0, // Default original price to 0
         quantity: quantity, // Use the quantity provided in the request body
-        itemTotal: (product.prices.price || 0) * quantity, 
+        displayPrice: product.displayPrice, // Use the quantity provided in the request body
+        itemTotal: ( product.prices.price || 0) * quantity, 
        // Calculate the total for this item
       };
 
@@ -200,6 +201,7 @@ const getOrderCustomer = async (req, res) => {
 const getOrderById = async (req, res) => {
   try {
     const order = await Order.findById(req.params.id);
+    console.log("orderorder",order);
     res.send(order);
   } catch (err) {
     res.status(500).send({

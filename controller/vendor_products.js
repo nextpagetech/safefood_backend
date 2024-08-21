@@ -20,53 +20,109 @@ const vendor_productadd = async (req, res) => {
     });
   }
 };
-
-
 const getvendor_IdOrderDetails = async (req, res) => {
   try {
     const { displayVendorID } = req.body;
     console.log("displayVendorID:", displayVendorID);
 
-    // Check if there's an order with the provided displayVendorID inside the products array
+    // Find the vendor order that contains the specified displayVendorID in its products
     const vendorOrder = await Vendor_order.findOne({
-      'products.displayVendorID': displayVendorID
+      'products.displayVendorID': displayVendorID,
     });
-    
-    if (vendorOrder) {
-      let allOrderIds = [];
-      
-      // Iterate over the products array to find the matching product and gather orderIds
-      vendorOrder.products.forEach(product => {
-        if (product.displayVendorID === displayVendorID) {
-          const orderIds = product.orderIds.map(order => order.id);
-          allOrderIds = allOrderIds.concat(orderIds);
-          console.log(`Order IDs for product: ${product.title}`, orderIds);
-        }
-      });
 
-      // Find all orders with the gathered IDs
-      const orderDetails = await Order.find({ _id: { $in: allOrderIds } });
-      console.log("Order Details:", orderDetails);
-
-      // If a matching order is found, return it along with order details
-      res.status(200).send({
-        message: "Vendor Order Details Found Successfully!",
-        data: vendorOrder,
-        orderDetails: orderDetails,
-      });
-    } else {
-      // If no matching order is found, return a 404 status
-      res.status(404).send({
+    if (!vendorOrder) {
+      return res.status(404).send({
         message: "Vendor Order Details Not Found!",
       });
     }
+
+    let allOrderIds = [];
+    let totalVendorOrderAmount = 0;
+    const productDetails = [];
+
+    // Iterate over the products in the vendor order to calculate totals and collect order IDs
+    vendorOrder.products.forEach(product => {
+      if (product.displayVendorID === displayVendorID) {
+        // Collect order IDs related to the vendor's product
+        const orderIds = product.orderIds.map(order => order.id);
+        allOrderIds = [...allOrderIds, ...orderIds];
+
+        // Calculate the total amount for this product
+        const productTotal = product.displayPrice * product.quantity;
+        totalVendorOrderAmount += productTotal;
+
+        // Store the product details along with its order IDs
+        productDetails.push({
+          title: product.title,
+          price: product.displayPrice,
+          quantity: product.quantity,
+          total: productTotal,
+          orderIds: orderIds,
+        });
+
+        console.log(`Order IDs for product: ${product.title}`, orderIds);
+      }
+    });
+
+    // Fetch the details of all orders using the collected order IDs
+    const orderDetails = await Order.find({ _id: { $in: allOrderIds } });
+
+    console.log("Order Details:", productDetails);
+    console.log("Total Vendor Order Amount:", totalVendorOrderAmount);
+
+    res.status(200).send({
+      message: "Vendor Order Details Found Successfully!",
+      productDetails, // Include the product details with their order IDs
+      orderDetails, // Send the fetched order details
+      totalAmount: totalVendorOrderAmount, // Include the calculated total amount
+    });
   } catch (err) {
-    // Handle any errors
+    console.error("Error fetching vendor order details:", err);
     res.status(500).send({
-      message: err.message,
+      message: "An error occurred while fetching vendor order details.",
+      error: err.message,
     });
   }
 };
+
+
+
+
+// const getvendor_IdOrderDetails = async (req, res) => {
+//   try {
+//     const { displayVendorID } = req.body;
+//     console.log("displayVendorID:", displayVendorID);
+//     const vendorOrder = await Vendor_order.findOne({
+//       'products.displayVendorID': displayVendorID
+//     });
+//     console.log("vendorOrdervendorOrder",vendorOrder);
+//     if (vendorOrder) {
+//       let allOrderIds = [];
+//       vendorOrder.products.forEach(product => {
+//         if (product.displayVendorID === displayVendorID) {
+//           const orderIds = product.orderIds.map(order => order.id);
+//           allOrderIds = allOrderIds.concat(orderIds);
+//           console.log(`Order IDs for product: ${product.title}`, orderIds);
+//         }
+//       });
+//       const orderDetails = await Order.find({ _id: { $in: allOrderIds } });
+//       console.log("Order Details:", orderDetails);
+//       res.status(200).send({
+//         message: "Vendor Order Details Found Successfully!",
+//         data: vendorOrder,
+//         orderDetails: orderDetails,
+//       });
+//     } else {
+//       res.status(404).send({
+//         message: "Vendor Order Details Not Found!",
+//       });
+//     }
+//   } catch (err) {
+//     res.status(500).send({
+//       message: err.message,
+//     });
+//   }
+// };
 
 
 
