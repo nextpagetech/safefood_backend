@@ -25,6 +25,12 @@ const vendorproductSchema = new mongoose.Schema(
       type: String,
       required: false,
     },
+
+    role: {
+      type: String,
+      required: true,   
+    },
+    
     products: [
       {
         productId: {
@@ -58,7 +64,8 @@ const vendorproductSchema = new mongoose.Schema(
           type: String,
           required: false,
         },
-        orderId: {  // Added field
+        
+        orderId: {  
           type: mongoose.Schema.Types.ObjectId,
           ref: 'Order',
           required: false
