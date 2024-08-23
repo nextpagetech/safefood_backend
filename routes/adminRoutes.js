@@ -1,6 +1,9 @@
 const express = require("express");
 const router = express.Router();
 const {
+  vendor_productadd, 
+} = require("../controller/vendor_products");
+const {
   registerAdmin,
   loginAdmin,
   forgetPassword,
@@ -12,10 +15,16 @@ const {
   deleteStaff,
   updatedStatus,
 } = require("../controller/adminController");
+router.post("/vendor_productadd", registerAdmin);
+
+// const vendorRoutes = require("../routes/vendor_products");
+
 const { passwordVerificationLimit } = require("../lib/email-sender/sender");
 
 //register a staff
 router.post("/register", registerAdmin);
+
+// router.post("/register",registervendor)
 
 //login a admin
 router.post("/login", loginAdmin);
