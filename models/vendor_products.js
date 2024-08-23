@@ -28,7 +28,7 @@ const vendorproductSchema = new mongoose.Schema(
 
     role: {
       type: String,
-      required: true,   
+      required: false,   
     },
     
     products: [
