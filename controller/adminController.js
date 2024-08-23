@@ -5,6 +5,8 @@ dayjs.extend(utc);
 const jwt = require("jsonwebtoken");
 const { signInToken, tokenForVerify, sendEmail } = require("../config/auth");
 const Admin = require("../models/Admin");
+const Vendorproduct = require("../models/vendor_products");
+
 
 const registerAdmin = async (req, res) => {
   try {
@@ -38,9 +40,55 @@ const registerAdmin = async (req, res) => {
   }
 };
 
+// const loginAdmin = async (req, res) => {
+//   try {
+//     const admin = await Admin.findOne({ email: req.body.email });
+//     const vendorproduct = await Vendorproduct.findOne({ email: req.body.email });
+//     if (admin && bcrypt.compareSync(req.body.password, admin.password)) {
+//       if(admin.role=="admin") {
+//       const token = signInToken(admin);
+//       res.send({
+//         token,
+//         _id: admin._id,
+//         name: admin.name,
+//         phone: admin.phone,
+//         email: admin.email,
+//         image: admin.image,
+//         role:admin.role
+//       });
+//     }
+//     else if(vendorproduct.role=="vendor"){
+//       const token = signInToken(vendorproduct);
+//       res.send({
+//         token,
+//         _id: admin._id,
+//         name: admin.name,
+//         phone: admin.phone,
+//         email: admin.email,
+//         image: admin.image,
+//         role:admin.role
+//       });
+//     }
+//     } else {
+//       res.status(401).send({
+//         message: "Invalid Email or password!",
+//       });
+//     }
+//   } catch (err) {
+//     res.status(500).send({
+//       message: err.message,
+//     });
+//   }
+// };
+
+
+
+
 const loginAdmin = async (req, res) => {
   try {
     const admin = await Admin.findOne({ email: req.body.email });
+    const vendorproduct = await Vendorproduct.findOne({ email: req.body.email });
+    
     if (admin && bcrypt.compareSync(req.body.password, admin.password)) {
       const token = signInToken(admin);
       res.send({
@@ -50,8 +98,21 @@ const loginAdmin = async (req, res) => {
         phone: admin.phone,
         email: admin.email,
         image: admin.image,
-        role:admin.role
+        role: admin.role
       });
+    } else if (vendorproduct && (req.body.password)) {
+      const token = signInToken(vendorproduct);
+      res.send({
+        token,
+        _id: vendorproduct._id,
+        name: vendorproduct.name,
+        // phone: vendorproduct.phone,
+        phone: vendorproduct.phone,
+        email: vendorproduct.email,
+        image: vendorproduct.image,
+        role: vendorproduct.role
+      });
+     
     } else {
       res.status(401).send({
         message: "Invalid Email or password!",
@@ -63,6 +124,38 @@ const loginAdmin = async (req, res) => {
     });
   }
 };
+
+
+// const loginvendorproducts = async (req, res) => {
+//   try {
+//     const vendorProduct = await vendorProduct.findOne({ email: req.body.email });
+
+//     if (vendorProduct && bcrypt.compareSync(req.body.password, vendorProduct.password)) {
+//       const token = signInToken(vendorProduct);
+
+//       // Send the token and other details in the response using the correct object `vendorProduct`
+//       res.send({
+//         token,
+//         _id: vendorProduct._id,
+//         name: vendorProduct.name,
+//         phone: vendorProduct.phone,
+//         email: vendorProduct.email,
+//         image: vendorProduct.image,
+//         role: vendorProduct.role
+//       });
+//     } else {
+//       res.status(401).send({
+//         message: "Invalid Email or password!",
+//       });
+//     }
+//   } catch (err) {
+//     res.status(500).send({
+//       message: err.message,
+//     });
+//   }
+// };
+
+
 
 const forgetPassword = async (req, res) => {
   const isAdded = await Admin.findOne({ email: req.body.verifyEmail });
@@ -249,6 +342,7 @@ const updatedStatus = async (req, res) => {
 };
 
 module.exports = {
+ 
   registerAdmin,
   loginAdmin,
   forgetPassword,
