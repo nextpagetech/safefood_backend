@@ -2,6 +2,7 @@ require("dotenv").config();
 const stripe = require("stripe");
 // const stripe = require("stripe")(`${process.env.STRIPE_KEY}` || null); /// use hardcoded key if env not work
 
+
 const mongoose = require("mongoose");
 
 const Order = require("../models/Order");
@@ -17,7 +18,7 @@ const { formatAmountForStripe } = require("../lib/stripe/stripe");
 //     console.log("req.bodyuser111",req.body);
 //     const newOrder = new Order({
 //       ...req.body,
-//       user: req.user._id,
+//       user: req.user._id,                                                                
 //     });
 //     const newOrdernew = new Ordernew({
 //       ...req.body,

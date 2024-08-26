@@ -389,6 +389,7 @@ const getDashboardAmount = async (req, res) => {
       },
     ]);
     // console.log('totalAmount',totalAmount)
+    
     const thisMonthOrderAmount = await Order.aggregate([
       {
         $project: {
