@@ -13,44 +13,7 @@ const orderSchema = new mongoose.Schema(
       type: Number,
       required: false,
     },
-    cart: [
-      {
-        prices: {
-          price: Number,
-          originalPrice: Number,
-          discount: Number,
-        },
-        image: [String],
-        tag: [String],
-        status: {
-          type: String,
-          enum: ["Pending", "Processing", "Delivered", "Cancel"],
-          default: "Pending",
-        },
-        _id: String,
-        sku: String,
-        barcode: String,
-        productId: String,
-        title: String,
-        category: {
-          _id: String,
-          name: {
-            en: String,
-          },
-        },
-        stock: Number,
-        isCombination: Boolean,
-        variant: {
-          price: Number,
-          originalPrice: Number,
-          discount: Number,
-        },
-        price: Number,
-        originalPrice: Number,
-        quantity: Number,
-        itemTotal: Number,
-      }
-    ],
+    cart: [{}],
     user_info: {
       name: {
         type: String,
@@ -94,6 +57,7 @@ const orderSchema = new mongoose.Schema(
       required: true,
       default: 0,
     },
+
     total: {
       type: Number,
       required: true,
@@ -113,7 +77,6 @@ const orderSchema = new mongoose.Schema(
     status: {
       type: String,
       enum: ["Pending", "Processing", "Delivered", "Cancel"],
-      default: "Pending",
     },
   },
   {
@@ -121,18 +84,11 @@ const orderSchema = new mongoose.Schema(
   }
 );
 
-// Middleware to update cart items' status to "Processing" before saving the order
-orderSchema.pre("save", function (next) {
-  this.cart.forEach(item => {
-    item.status = "Processing";
-  });
-  next();
-});
-
-orderSchema.plugin(AutoIncrement, {
-  inc_field: "invoices",
-  start_seq: 10000,
-});
-
-const Order = mongoose.model("Ordersnew", orderSchema);
+const Order = mongoose.model(
+  "Ordernew",
+  orderSchema.plugin(AutoIncrement, {
+    inc_field: "invoices",
+    start_seq: 10000,
+  })
+);
 module.exports = Order;

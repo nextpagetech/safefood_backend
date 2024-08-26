@@ -279,7 +279,7 @@ const getAllOrdersnew = async (req, res) => {
 const getOrdernewById = async (req, res) => {
   try {
     const order = await Ordernew.findById(req.params.id);
-    console.log("orderorder", order);
+    console.log("orderorder",order);
     res.send(order);
   } catch (err) {
     res.status(500).send({
