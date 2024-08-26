@@ -11,6 +11,7 @@ const productRoutes = require("../routes/productRoutes");
 const customerRoutes = require("../routes/customerRoutes");
 const adminRoutes = require("../routes/adminRoutes");
 const orderRoutes = require("../routes/orderRoutes");
+// const ordernewRoutes = require("../routes/ordernewRoutes");
 const customerOrderRoutes = require("../routes/customerOrderRoutes");
 const categoryRoutes = require("../routes/categoryRoutes");
 const shippingRoutes = require("../routes/shipping_address");
@@ -91,6 +92,7 @@ app.use("/api/our_programs/", ourProgramsRoutes);
 //if you not use admin dashboard then these two route will not needed.
 app.use("/api/admin/", adminRoutes);
 app.use("/api/orders/", orderRoutes);
+// app.use("/api/ordernew/", ordernewRoutes);
 app.use("/api/contact/", contactRoutes);
 app.use("/api/joinus/", joinusRoutes);
 app.use("/api/Payment/", PaymentRoutes);

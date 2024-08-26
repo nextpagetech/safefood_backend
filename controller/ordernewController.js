@@ -6,6 +6,7 @@ const Order = require("../models/Order");
 const { handleProductQuantity } = require("../lib/stock-controller/others");
 
 
+
 const addOrdernew = async (req, res) => {
   try {
     console.log("req.bodyuser", req.user);
@@ -279,7 +280,7 @@ const getAllOrdersnew = async (req, res) => {
 const getOrdernewById = async (req, res) => {
   try {
     const order = await Ordernew.findById(req.params.id);
-    console.log("orderorder", order);
+    console.log("orderorder",order);
     res.send(order);
   } catch (err) {
     res.status(500).send({

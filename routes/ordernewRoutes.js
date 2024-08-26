@@ -10,10 +10,11 @@ const {
 
 
 
+
 router.post("/addOrdernew", addOrdernew);
 router.post("/updateProductStatus", updateProductStatus);
 router.get("/", getAllOrdersnew);
-router.get("/:id", getOrdernewById);
+router.get("/getOrdernewById/:id", getOrdernewById);
 
 
 module.exports = router;

@@ -31,6 +31,7 @@ const { formatAmountForStripe } = require("../lib/stripe/stripe");
 //   } catch (err) {
 //     res.status(500).send({
 //       message: err.message,
+
 //     });
 //   }
 // };
@@ -78,6 +79,7 @@ const addOrder = async (req, res) => {
     res.status(500).send({
       message: err.message,
     });
+    
   }
 };
 
