@@ -40,12 +40,16 @@ const registerAdmin = async (req, res) => {
   }
 };
 
+
+
+
 // const loginAdmin = async (req, res) => {
 //   try {
 //     const admin = await Admin.findOne({ email: req.body.email });
-//     const vendorproduct = await Vendorproduct.findOne({ email: req.body.email });
+//     // const vendorproduct = await Vendorproduct.findOne({ email: req.body.email });
+//     const user = await Vendorproduct.findOne({ email });
+    
 //     if (admin && bcrypt.compareSync(req.body.password, admin.password)) {
-//       if(admin.role=="admin") {
 //       const token = signInToken(admin);
 //       res.send({
 //         token,
@@ -54,22 +58,155 @@ const registerAdmin = async (req, res) => {
 //         phone: admin.phone,
 //         email: admin.email,
 //         image: admin.image,
-//         role:admin.role
+//         role: admin.role
 //       });
-//     }
-//     else if(vendorproduct.role=="vendor"){
-//       const token = signInToken(vendorproduct);
-//       res.send({
+//     }else if {
+//       if (user && user.role === "Vendor" && password === user.password) {
+//               const token = signInToken(user);
+//               res.send({
+//                 token,
+//                 _id: user._id,
+//                 name: user.name,
+//                 phone: user.phone,
+//                 email: user.email,
+//                 image: user.image,
+//                 role: user.role,
+//               });
+          
+//               res.status(401).send({
+//                 message: "Invalid Email or password!",
+//               });
+//             }
+//           } catch (err) {
+//             res.status(500).send({
+//               message: err.message,
+//             });
+//           }
+//         };
+        
+    
+
+
+
+
+
+
+// const loginAdmin = async (req, res) => {
+//   try {
+//     const { email, password } = req.body;
+
+//     const admin = await Admin.findOne({ email });
+
+//     if (admin && bcrypt.compareSync(password, admin.password)) {
+//       const token = signInToken(admin);
+//       return res.send({
 //         token,
 //         _id: admin._id,
 //         name: admin.name,
 //         phone: admin.phone,
 //         email: admin.email,
 //         image: admin.image,
-//         role:admin.role
+//         role: admin.role
 //       });
 //     }
+
+//     const user = await Vendorproduct.findOne({ email });
+
+//     if (user && user.role === "Vendor" && password === user.password) {
+//       const token = signInToken(user);
+//        res.send({
+//         token,
+//         _id: user._id,
+//         name: user.name,
+//         phone: user.phone,
+//         email: user.email,
+//         image: user.image,
+//         role: user.role
+//       });
+//     }
+//     return res.status(401).send({
+//       message: "Invalid Email or password!",
+//     });
+
+//   } catch (err) {
+//     return res.status(500).send({
+//       message: err.message,
+//     });
+//   }
+// };
+
+
+
+
+const loginAdmin = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    const admin = await Admin.findOne({ email });
+
+    if (admin && bcrypt.compareSync(password, admin.password)) {
+      const token = signInToken(admin);
+      return res.send({
+        token,
+        _id: admin._id,
+        name: admin.name,
+        phone: admin.phone,
+        email: admin.email,
+        image: admin.image,
+        role: admin.role
+      });
+    }
+
+    const user = await Vendorproduct.findOne({ email });
+
+    if (user && user.role === "Vendor" && password === user.password) {
+      const token = signInToken(user);
+      return res.send({
+        token,
+        _id: user._id,
+        name: user.name,
+        phone: user.phone,
+        email: user.email,
+        image: user.image,
+        role: user.role
+      });
+    }
+
+    return res.status(401).send({
+      message: "Invalid Email or password!",
+    });
+
+  } catch (err) {
+    return res.status(500).send({
+      message: err.message,
+    });
+  }
+};
+
+
+
+
+// const loginAdmin = async (req, res) => {
+//   try {
+//     const { email, password } = req.body;
+
+
+//     const user = await Vendorproduct.findOne({ email });
+
+
+//     if (user && user.role === "Vendor" && password === user.password) {
+//       const token = signInToken(user);
+//       res.send({
+//         token,
+//         _id: user._id,
+//         name: user.name,
+//         phone: user.phone,
+//         email: user.email,
+//         image: user.image,
+//         role: user.role,
+//       });
 //     } else {
+      
 //       res.status(401).send({
 //         message: "Invalid Email or password!",
 //       });
@@ -84,46 +221,10 @@ const registerAdmin = async (req, res) => {
 
 
 
-const loginAdmin = async (req, res) => {
-  try {
-    const admin = await Admin.findOne({ email: req.body.email });
-    const vendorproduct = await Vendorproduct.findOne({ email: req.body.email });
-    
-    if (admin && bcrypt.compareSync(req.body.password, admin.password)) {
-      const token = signInToken(admin);
-      res.send({
-        token,
-        _id: admin._id,
-        name: admin.name,
-        phone: admin.phone,
-        email: admin.email,
-        image: admin.image,
-        role: admin.role
-      });
-    } else if (vendorproduct && (req.body.password)) {
-      const token = signInToken(vendorproduct);
-      res.send({
-        token,
-        _id: vendorproduct._id,
-        name: vendorproduct.name,
-        // phone: vendorproduct.phone,
-        phone: vendorproduct.phone,
-        email: vendorproduct.email,
-        image: vendorproduct.image,
-        role: vendorproduct.role
-      });
-     
-    } else {
-      res.status(401).send({
-        message: "Invalid Email or password!",
-      });
-    }
-  } catch (err) {
-    res.status(500).send({
-      message: err.message,
-    });
-  }
-};
+
+
+
+
 
 
 // const loginvendorproducts = async (req, res) => {
@@ -154,6 +255,9 @@ const loginAdmin = async (req, res) => {
 //     });
 //   }
 // };
+
+
+
 
 
 
@@ -345,6 +449,7 @@ module.exports = {
  
   registerAdmin,
   loginAdmin,
+  
   forgetPassword,
   resetPassword,
   addStaff,
