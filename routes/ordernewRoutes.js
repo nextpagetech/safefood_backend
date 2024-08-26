@@ -9,7 +9,7 @@ const {
 
 
 
-router.post("/add", addOrdernew);
+router.post("/addOrdernew", addOrdernew);
 router.post("/updateProductStatus", updateProductStatus);
 router.get("/", getAllOrdersnew);
 router.get("/:id", getOrdernewById);

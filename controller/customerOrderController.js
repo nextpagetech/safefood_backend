@@ -5,26 +5,82 @@ const stripe = require("stripe");
 const mongoose = require("mongoose");
 
 const Order = require("../models/Order");
+const Ordernew = require("../models/ordersnew");
 const Setting = require("../models/Setting");
 
 const { handleProductQuantity } = require("../lib/stock-controller/others");
 const { formatAmountForStripe } = require("../lib/stripe/stripe");
 
+// const addOrder = async (req, res) => {
+//   try {
+//     console.log("req.bodyuser11",req.user);
+//     console.log("req.bodyuser111",req.body);
+//     const newOrder = new Order({
+//       ...req.body,
+//       user: req.user._id,
+//     });
+//     const newOrdernew = new Ordernew({
+//       ...req.body,
+//       user: req.user._id,
+//     });
+//     const order = await newOrder.save();
+//     const ordernew = await newOrdernew.save();
+//     res.status(201).send(order);
+//     handleProductQuantity(order.cart);
+//   } catch (err) {
+//     res.status(500).send({
+//       message: err.message,
+//     });
+//   }
+// };
+
+
 const addOrder = async (req, res) => {
   try {
-    const newOrder = new Order({
+    console.log("req.user:", req.user);
+    console.log("req.body:", req.body);
+
+    // Create a copy of req.body for the Order model
+    const orderData = {
       ...req.body,
       user: req.user._id,
-    });
+    };
+
+    // Create a copy of req.body for the Ordernew model and ensure each cart item's status is set to 'Pending'
+    const ordernewData = {
+      ...req.body,
+      user: req.user._id,
+    };
+
+    if (ordernewData.cart && Array.isArray(ordernewData.cart)) {
+      ordernewData.cart = ordernewData.cart.map(item => ({
+        ...item,
+        status: 'Pending',  // Set status to 'Pending' for Ordernew
+      }));
+    }
+
+    // Create and save the Order (with normal data from frontend)
+    const newOrder = new Order(orderData);
     const order = await newOrder.save();
+
+    // Create and save the Ordernew (with 'Pending' status)
+    const newOrdernew = new Ordernew(ordernewData);
+    const ordernew = await newOrdernew.save();
+
+    // Respond with the saved order
     res.status(201).send(order);
+
+    // Handle product quantity after responding
     handleProductQuantity(order.cart);
   } catch (err) {
+    // Handle any errors during the operation
     res.status(500).send({
       message: err.message,
     });
   }
 };
+
+
 
 //create payment intent for stripe
 const createPaymentIntent = async (req, res) => {
