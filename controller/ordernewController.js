@@ -5,6 +5,7 @@ const Ordernew = require("../models/ordersnew");
 const Order = require("../models/Order");
 const { handleProductQuantity } = require("../lib/stock-controller/others");
 
+
 const addOrdernew = async (req, res) => {
   try {
     console.log("req.bodyuser", req.user);
