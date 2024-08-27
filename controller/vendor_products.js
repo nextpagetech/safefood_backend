@@ -4,6 +4,7 @@ const Vendor_order = require("../models/vendorOrder");
 const Product = require("../models/Product");
 const { languageCodes } = require("../utils/data");
 const Order = require("../models/Order");
+const Ordernew = require("../models/ordersnew");
 const admin = require("../models/Admin")
 
 const vendor_productadd = async (req, res) => {
@@ -20,6 +21,73 @@ const vendor_productadd = async (req, res) => {
     });
   }
 };
+
+
+// const getvendor_IdOrderDetails = async (req, res) => {
+//   try {
+//     const { displayVendorID } = req.body;
+//     console.log("displayVendorID:", displayVendorID);
+
+//     // Find the vendor order that contains the specified displayVendorID in its products
+//     const vendorOrder = await Vendor_order.findOne({
+//       'products.displayVendorID': displayVendorID,
+//     });
+
+//     if (!vendorOrder) {
+//       return res.status(404).send({
+//         message: "Vendor Order Details Not Found!",
+//       });
+//     }
+
+//     let allOrderIds = [];
+//     let totalVendorOrderAmount = 0;
+//     const productDetails = [];
+
+//     // Iterate over the products in the vendor order to calculate totals and collect order IDs
+//     vendorOrder.products.forEach(product => {
+//       if (product.displayVendorID === displayVendorID) {
+//         // Collect order IDs related to the vendor's product
+//         const orderIds = product.orderIds.map(order => order.id);
+//         allOrderIds = [...allOrderIds, ...orderIds];
+
+//         // Calculate the total amount for this product
+//         const productTotal = product.displayPrice * product.quantity;
+//         totalVendorOrderAmount += productTotal;
+
+//         // Store the product details along with its order IDs
+//         productDetails.push({
+//           title: product.title,
+//           price: product.displayPrice,
+//           quantity: product.quantity,
+//           total: productTotal,
+//           orderIds: orderIds,
+//         });
+
+//         console.log(`Order IDs for product: ${product.title}`, orderIds);
+//       }
+//     });
+
+//     // Fetch the details of all orders using the collected order IDs
+//     const orderDetails = await Ordernew.find({ _id: { $in: allOrderIds } });
+
+//     console.log("Order Details:", productDetails);
+//     console.log("Total Vendor Order Amount:", totalVendorOrderAmount);
+
+//     res.status(200).send({
+//       message: "Vendor Order Details Found Successfully!",
+//       productDetails, // Include the product details with their order IDs
+//       orderDetails, // Send the fetched order details
+//       totalAmount: totalVendorOrderAmount, // Include the calculated total amount
+//     });
+//   } catch (err) {
+//     console.error("Error fetching vendor order details:", err);
+//     res.status(500).send({
+//       message: "An error occurred while fetching vendor order details.",
+//       error: err.message,
+//     });
+//   }
+// };
+
 const getvendor_IdOrderDetails = async (req, res) => {
   try {
     const { displayVendorID } = req.body;
@@ -38,42 +106,59 @@ const getvendor_IdOrderDetails = async (req, res) => {
 
     let allOrderIds = [];
     let totalVendorOrderAmount = 0;
-    const productDetails = [];
+    const orderDetailsMap = {};
 
     // Iterate over the products in the vendor order to calculate totals and collect order IDs
     vendorOrder.products.forEach(product => {
       if (product.displayVendorID === displayVendorID) {
-        // Collect order IDs related to the vendor's product
-        const orderIds = product.orderIds.map(order => order.id);
-        allOrderIds = [...allOrderIds, ...orderIds];
+        product.orderIds.forEach(order => {
+          const orderId = order.id;
 
-        // Calculate the total amount for this product
-        const productTotal = product.displayPrice * product.quantity;
-        totalVendorOrderAmount += productTotal;
+          // If the orderId isn't in the map yet, initialize it
+          if (!orderDetailsMap[orderId]) {
+            orderDetailsMap[orderId] = {
+              orderId: orderId,
+              products: [],
+              orderTotal: 0,
+            };
+            allOrderIds.push(orderId); // Collect all order IDs
+          }
 
-        // Store the product details along with its order IDs
-        productDetails.push({
-          title: product.title,
-          price: product.displayPrice,
-          quantity: product.quantity,
-          total: productTotal,
-          orderIds: orderIds,
+          // Calculate the total amount for this product
+          const productTotal = product.displayPrice * product.quantity;
+          totalVendorOrderAmount += productTotal;
+
+          // Add product details to the specific order
+          orderDetailsMap[orderId].products.push({
+            title: product.title,
+            price: product.displayPrice,
+            quantity: product.quantity,
+            total: productTotal,
+          });
+
+          // Add the product total to the order total
+          orderDetailsMap[orderId].orderTotal += productTotal;
         });
 
-        console.log(`Order IDs for product: ${product.title}`, orderIds);
+        console.log(`Order IDs for product: ${product.title}`, product.orderIds.map(order => order.id));
       }
     });
 
     // Fetch the details of all orders using the collected order IDs
-    const orderDetails = await Order.find({ _id: { $in: allOrderIds } });
+    const fetchedOrders = await Ordernew.find({ _id: { $in: allOrderIds } });
 
-    console.log("Order Details:", productDetails);
+    // Map order details to each order in the response
+    const orderDetails = fetchedOrders.map(order => ({
+      ...orderDetailsMap[order._id.toString()],
+      orderInfo: order,
+    }));
+
+    console.log("Order Details:", orderDetails);
     console.log("Total Vendor Order Amount:", totalVendorOrderAmount);
 
     res.status(200).send({
       message: "Vendor Order Details Found Successfully!",
-      productDetails, // Include the product details with their order IDs
-      orderDetails, // Send the fetched order details
+      orderDetails, // Send the products grouped by order with their respective details
       totalAmount: totalVendorOrderAmount, // Include the calculated total amount
     });
   } catch (err) {
@@ -84,6 +169,7 @@ const getvendor_IdOrderDetails = async (req, res) => {
     });
   }
 };
+
 
 
 
