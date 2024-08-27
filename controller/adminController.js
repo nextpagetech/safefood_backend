@@ -137,7 +137,6 @@ const registerAdmin = async (req, res) => {
 
 
 
-
 const loginAdmin = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -217,11 +216,6 @@ const loginAdmin = async (req, res) => {
 //     });
 //   }
 // };
-
-
-
-
-
 
 
 

@@ -88,6 +88,81 @@ const vendor_productadd = async (req, res) => {
 //   }
 // };
 
+// const getvendor_IdOrderDetails = async (req, res) => {
+//   try {
+//     const { displayVendorID } = req.body;
+//     console.log("displayVendorID:", displayVendorID);
+
+//     // Find the vendor order that contains the specified displayVendorID in its products
+//     const vendorOrder = await Vendor_order.findOne({
+//       'products.displayVendorID': displayVendorID,
+//     });
+
+//     if (!vendorOrder) {
+//       return res.status(404).send({
+//         message: "Vendor Order Details Not Found!",
+//       });
+//     }
+
+//     let allOrderIds = [];
+//     let totalVendorOrderAmount = 0;
+//     const orderDetailsMap = {};
+
+//     // Iterate over the products in the vendor order to calculate totals and collect order IDs
+//     vendorOrder.products.forEach(product => {
+//       if (product.displayVendorID === displayVendorID) {
+//         product.orderIds.forEach(order => {
+//           const orderId = order.id;
+
+//           // If the orderId isn't in the map yet, initialize it
+//           if (!orderDetailsMap[orderId]) {
+//             orderDetailsMap[orderId] = {
+//               orderId: orderId,
+//               products: [],
+//               orderTotal: 0,
+//             };
+//             allOrderIds.push(orderId); // Collect all order IDs
+//           }
+
+//           // Calculate the total amount for this product
+//           const productTotal = product.displayPrice * product.quantity;
+//           totalVendorOrderAmount += productTotal;
+
+//           // Add product details to the specific order
+//           orderDetailsMap[orderId].products.push({
+//             title: product.title,
+//             price: product.displayPrice,
+//             quantity: product.quantity,
+//             total: productTotal,
+//           });
+
+//           // Add the product total to the order total
+//           orderDetailsMap[orderId].orderTotal += productTotal;
+//         });
+
+//         console.log(`Order IDs for product: ${product.title}`, product.orderIds.map(order => order.id));
+//       }
+//     });
+
+//     // Fetch the details of all orders using the collected order IDs
+//     const orderDetails = await Ordernew.find({ _id: { $in: allOrderIds } });
+
+//     console.log("Order Details:", orderDetails);
+//     console.log("Total Vendor Order Amount:", totalVendorOrderAmount);
+
+//     res.status(200).send({
+//       message: "Vendor Order Details Found Successfully!",
+//       orderDetails, // Send the products grouped by order with their respective details
+//       totalAmount: totalVendorOrderAmount, // Include the calculated total amount
+//     });
+//   } catch (err) {
+//     console.error("Error fetching vendor order details:", err);
+//     res.status(500).send({
+//       message: "An error occurred while fetching vendor order details.",
+//       error: err.message,
+//     });
+//   }
+// };
 const getvendor_IdOrderDetails = async (req, res) => {
   try {
     const { displayVendorID } = req.body;
@@ -140,7 +215,7 @@ const getvendor_IdOrderDetails = async (req, res) => {
           orderDetailsMap[orderId].orderTotal += productTotal;
         });
 
-        console.log(`Order IDs for product: ${product.title}`, product.orderIds.map(order => order.id));
+        // console.log(Order IDs for product: ${product.title}, product.orderIds.map(order => order.id));
       }
     });
 
@@ -169,7 +244,6 @@ const getvendor_IdOrderDetails = async (req, res) => {
     });
   }
 };
-
 
 
 
@@ -853,6 +927,7 @@ const updatevendor_product = async (req, res) => {
       vendorProduct.email = req.body.email;
       vendorProduct.password = req.body.password;
       vendorProduct.products = req.body.products;
+      vendorProduct.role = req.body.role;
       vendorProduct.phone = req.body.phone;
       vendorProduct.status = req.body.status;
       vendorProduct.modified_by = req.body.modified_by || null;
@@ -864,6 +939,7 @@ const updatevendor_product = async (req, res) => {
         image: updatedVendorProduct.image,
         email: updatedVendorProduct.email,
         phone: updatedVendorProduct.phone,
+        role: updatedVendorProduct.role,
         password: updatedVendorProduct.password,
         products: updatedVendorProduct.products,
         status: updatedVendorProduct.status,
