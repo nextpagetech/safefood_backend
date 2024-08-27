@@ -14,7 +14,7 @@ const {
   getDashboardAmount,
   // getOrderByIdVendorName,
   getVendorOrderDetails,
-  getOrderAdminInvoiceById,
+
   getOrderUpdateAdminInvoiceById,
 } = require("../controller/orderController");
 
@@ -50,7 +50,7 @@ router.put("/:id", updateOrder);
 //delete a order
 router.delete("/:id", deleteOrder);
 
-router.post("/getAdminInvoice", getOrderAdminInvoiceById);
+
 
 router.post(`/update`, getOrderUpdateAdminInvoiceById);
 
