@@ -2,7 +2,6 @@ const mongoose = require("mongoose");
 const AutoIncrement = require("mongoose-sequence")(mongoose);
 
 
-
 const orderSchema = new mongoose.Schema(
   {
     user: {
@@ -14,7 +13,44 @@ const orderSchema = new mongoose.Schema(
       type: Number,
       required: false,
     },
-    cart: [{}],
+    cart: [
+      {
+        prices: {
+          price: Number,
+          originalPrice: Number,
+          discount: Number,
+        },
+        image: [String],
+        tag: [String],
+        status: {
+          type: String,
+          enum: ["Pending", "Processing", "Delivered", "Cancel"],
+          default: "Pending",
+        },
+        _id: String,
+        sku: String,
+        barcode: String,
+        productId: String,
+        title: String,
+        category: {
+          _id: String,
+          name: {
+            en: String,
+          },
+        },
+        stock: Number,
+        isCombination: Boolean,
+        variant: {
+          price: Number,
+          originalPrice: Number,
+          discount: Number,
+        },
+        price: Number,
+        originalPrice: Number,
+        quantity: Number,
+        itemTotal: Number,
+      }
+    ],
     user_info: {
       name: {
         type: String,
@@ -58,7 +94,6 @@ const orderSchema = new mongoose.Schema(
       required: true,
       default: 0,
     },
-
     total: {
       type: Number,
       required: true,
@@ -78,6 +113,7 @@ const orderSchema = new mongoose.Schema(
     status: {
       type: String,
       enum: ["Pending", "Processing", "Delivered", "Cancel"],
+      default: "Pending",
     },
   },
   {
@@ -85,11 +121,13 @@ const orderSchema = new mongoose.Schema(
   }
 );
 
-const Order = mongoose.model(
-  "Ordernew",
-  orderSchema.plugin(AutoIncrement, {
-    inc_field: "invoices",
-    start_seq: 10000,
-  })
-);
+// Middleware to update cart items' status to "Processing" before saving the order
+
+
+orderSchema.plugin(AutoIncrement, {
+  inc_field: "invoices",
+  start_seq: 10000,
+});
+
+const Order = mongoose.model("Ordersnew", orderSchema);
 module.exports = Order;

@@ -1,6 +1,6 @@
 const Order = require("../models/Order");
 const Product = require("../models/Product");
-
+const Ordernew = require("../models/ordersnew");
 const getAllOrders = async (req, res) => {
   const {
     day,
@@ -126,66 +126,6 @@ const getAllOrders = async (req, res) => {
   }
 };
 
-const getOrderAdminInvoiceById = async (req, res) => {
-  try {
-    const { id, productId, quantity } = req.body;
-    console.log("req.body123:", req.body);
-
-    const order = await Order.findById(id);
-    if (!order) {
-      return res.status(404).send({ message: "Order not found." });
-    }
-
-    console.log("order.cart:", order.cart);
-    const productIdString = productId.toString();
-    const productInCart = order.cart.find((item) => item.productId.toString() === productIdString);
-    console.log("productIdString:", productIdString);
-    console.log("productInCart:", productInCart);
-
-    if (productInCart) {
-      return res.status(400).send({ message: "Product already exists in the cart." });
-    } else {
-      const product = await Product.findById(productId)
-        .populate({ path: "category", select: "_id name" })
-        .populate({ path: "categories", select: "_id name" });
-
-      if (!product) {
-        return res.status(404).send({ message: "Product not found." });
-      }
-
-      // Log the fetched product to check the fields
-      console.log("Fetched product:", product);
-
-      const newCartItem = {
-        prices: product.prices || {}, // Use an empty object as fallback
-        image: product.image || [], // Use an empty array as fallback
-        tag: product.tag || [], // Use an empty array as fallback
-        status: product.status || "unknown", // Default status if not present
-        productId: product._id.toString(),
-        _id: product._id.toString(),
-        title: product.title.en || "Untitled", // Default title if not present
-        category: product.category || { _id: null, name: "Uncategorized" }, // Default category if not present
-        stock: product.stock || 0, // Default stock if not present
-        isCombination: product.isCombination || false, // Default to false
-        price: product.prices.price || 0, // Default price to 0
-        originalPrice: product.prices.originalPrice || 0, // Default original price to 0
-        quantity: quantity, // Use the quantity provided in the request body
-        displayPrice: product.displayPrice, // Use the quantity provided in the request body
-        itemTotal: ( product.prices.price || 0) * quantity, 
-       // Calculate the total for this item
-      };
-
-      console.log("newCartItem:", newCartItem); // Log the newCartItem object
-
-      order.cart.push(newCartItem);
-      order.total = order.cart.reduce((sum, item) => sum + item.itemTotal, 0);
-      await order.save();
-      res.send(order);
-    }
-  } catch (err) {
-    res.status(500).send({ message: err.message });
-  }
-};
 
 const getOrderCustomer = async (req, res) => {
   try {
@@ -878,7 +818,7 @@ module.exports = {
   getOrderCustomer,
   updateOrder,
   deleteOrder,
-  getOrderAdminInvoiceById,
+  
   bestSellerProductChart,
   getDashboardOrders,
   getDashboardRecentOrder,  
