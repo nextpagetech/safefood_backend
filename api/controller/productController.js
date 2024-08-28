@@ -109,7 +109,10 @@ const getAllProducts = async (req, res) => {
       .skip(skip)
       .limit(limits);
       const productsnew = await Product.find(queryObject)
-     
+      .populate({ path: "category", select: "_id name" })
+      .populate({ path: "categories", select: "_id name" })
+      .sort(sortObject)
+      .skip(skip);
     
 
     res.send({
