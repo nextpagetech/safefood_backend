@@ -756,61 +756,7 @@ const getVendorOrderDetails = async (req, res) => {
   }
 };
 
-const getOrderUpdateAdminInvoiceById = async (req, res) => {
-  
-  try {
-    console.log("Starting getOrderUpdateAdminInvoiceById");
 
-    const { id, productId, quantity } = req.body;
-
-    const sanitizedProductId = productId.trim().replace(/^,/, '');
-
-    console.log("Sanitized Product ID:", sanitizedProductId);
-    console.log("Request Body:", req.body);
-
-    const order = await Order.findById(id);
-
-    if (!order) {
-      return res.status(404).send({ message: "Order not found." });
-    }
-
-    console.log("order.cart:", order.cart);
-
-    const productInCart = order.cart.find(
-      (item) => item.productId.toString() === sanitizedProductId
-    );
-
-    console.log("productInCart:", productInCart);
-
-    if (!productInCart) {
-      return res.status(404).send({ message: "Product not found in the cart." });
-    }
-
-    console.log("Before update:", productInCart);
-
-    productInCart.quantity = Number(quantity); 
-    productInCart.itemTotal = productInCart.quantity * productInCart.prices.price;
-
-    order.markModified('cart');
-
-    order.subTotal = order.cart.reduce((acc, item) => acc + item.itemTotal, 0);
-    order.total = order.subTotal + 60; 
-
-    order.status = order.status || "Pending"; 
-
-    const updatedOrder = await order.save();
-
-    console.log("Updated order:", updatedOrder);
-
-    res.send(updatedOrder);
-
-    console.log("Order updated successfully");
-
-  } catch (err) {
-    console.error("Error updating order:", err);
-    res.status(500).send({ message: err.message });
-  }
-};
 
 module.exports = {
   getAllOrders,
@@ -826,5 +772,5 @@ module.exports = {
   getDashboardAmount,
   // getOrderByIdVendorName,
   getVendorOrderDetails,
-  getOrderUpdateAdminInvoiceById,
+
 };
