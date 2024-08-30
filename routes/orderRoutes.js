@@ -15,7 +15,6 @@ const {
   // getOrderByIdVendorName,
   getVendorOrderDetails,
 
-  getOrderUpdateAdminInvoiceById,
 } = require("../controller/orderController");
 
 //get all orders
@@ -52,6 +51,6 @@ router.delete("/:id", deleteOrder);
 
 
 
-router.post(`/update`, getOrderUpdateAdminInvoiceById);
+
 
 module.exports = router;

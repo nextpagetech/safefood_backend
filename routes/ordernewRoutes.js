@@ -7,6 +7,7 @@ const {
     getOrdernewById,
     updateOrdernew,
     getOrderAdminInvoiceById,
+    getOrderUpdateAdminInvoiceById,
 } = require("../controller/ordernewController");
 
 
@@ -18,6 +19,6 @@ router.post("/updateProductStatus", updateProductStatus);
 router.get("/", getAllOrdersnew);
 router.put("/:id", updateOrdernew);
 router.get("/getOrdernewById/:id", getOrdernewById);
-
+router.post(`/update`, getOrderUpdateAdminInvoiceById);
 
 module.exports = router;
