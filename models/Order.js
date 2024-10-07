@@ -57,7 +57,6 @@ const orderSchema = new mongoose.Schema(
       required: true,
       default: 0,
     },
-
     total: {
       type: Number,
       required: true,
@@ -83,7 +82,7 @@ const orderSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
-
+  
 const Order = mongoose.model(
   "Order",
   orderSchema.plugin(AutoIncrement, {
