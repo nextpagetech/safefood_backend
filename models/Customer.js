@@ -39,7 +39,7 @@ const customerSchema = new mongoose.Schema(
       email: {
         type: String,
         required: true,
-        unique: true,
+        unique: 1,
         lowercase: true,
       },
 

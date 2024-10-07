@@ -13,7 +13,7 @@ const vendorproductSchema = new mongoose.Schema(
     email: {
       type: String,
       required: false,
-      unique: true,
+      unique:false,
       lowercase: true,
     },
     password: {
